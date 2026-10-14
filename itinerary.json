@@ -1,60 +1,39 @@
 {
-  "destination": "Japan (Tokyo + Kyoto)",
-  "trip_title": "Tokyo → Kyoto Food + Culture + Anime/Tech (Relaxed 5-Day Plan, Dec 1–5)",
-  "summary": "A relaxed 3-day Tokyo base followed by 2 days in Kyoto, centered on food (street food, ramen, izakayas), temples and traditional culture, plus anime/tech and photography spots. Transport is kept budget-friendly, and the user’s EUR 800 covers everything except already-booked flights and accommodation.",
+  "destination": "Nagano, Japan",
+  "trip_title": "Relaxed Winter Photography Trip: Nagano (Zenko-ji + Snow Monkeys) — Dec 3–4",
+  "summary": "This 2-day Nagano itinerary keeps things relaxed and centered on your priorities: temples for photography, snow monkeys, and local food. You’ll have a dedicated morning for Jigokudani and flexible temple time, with warm breaks built in for December cold.",
   "days": [
     {
       "day_number": 1,
-      "title": "Arrival + Asakusa (old Tokyo)",
-      "morning": "Check in / drop bags. Walk around Asakusa at an easy, scenic pace.",
-      "afternoon": "Senso-ji Temple and Nakamise-dori; browse small shops.",
-      "evening": "Street-food snack run around Asakusa; izakaya dinner nearby."
+      "title": "Dec 3 — Zenko-ji temple area + local food photography",
+      "morning": "Zenko-ji Temple area for relaxed walking and photography; explore the surrounding temple-town lanes for winter street scenes.",
+      "afternoon": "Quiet, indoor or slower segment around the Zenko-ji area (temple history/museum time if desired), plus optional gentle stroll between Nagano city centre and the temple zone for photos.",
+      "evening": "Dinner in central Nagano focused on local dishes (e.g., regional specialties like oyaki and local soba if available) and a short evening photo walk for warm storefront lights."
     },
     {
       "day_number": 2,
-      "title": "Meiji Jingu + Shibuya/Harajuku anime/tech vibes",
-      "morning": "Early visit to Meiji Jingu; short walk toward Harajuku side streets.",
-      "afternoon": "Explore Shibuya area (Shibuya Scramble and photo spots) and enjoy anime/tech neighborhoods and shops at a relaxed pace.",
-      "evening": "Ramen dinner; optionally a themed café or arcade for the anime/tech mood."
-    },
-    {
-      "day_number": 3,
-      "title": "Tsukiji Outer Market + Akihabara",
-      "morning": "Tsukiji Outer Market early for breakfast bites and small tastings.",
-      "afternoon": "Akihabara for anime and tech; browse and take photos of storefronts/streets.",
-      "evening": "Izakaya (choose another food variety vs. Day 2—order a few standout dishes and keep it light)."
-    },
-    {
-      "day_number": 4,
-      "title": "Travel to Kyoto + Fushimi Inari at night",
-      "morning": "Travel Tokyo → Kyoto. Light lunch near the first Kyoto stop.",
-      "afternoon": "Fushimi Inari Taisha for torii gates and photography; keep the pace relaxed.",
-      "evening": "Explore Gion and nearby traditional lanes; dinner in Kyoto (izakaya or a casual traditional meal)."
-    },
-    {
-      "day_number": 5,
-      "title": "Temples + traditional culture + final photos",
-      "morning": "Kiyomizu-dera area for temple + historic-street atmosphere and viewpoints.",
-      "afternoon": "Second traditional culture stop at a relaxed pace (choose based on what still feels best after morning).",
-      "evening": "Final meal in Kyoto: farewell dinner with street-food-style snacks and/or ramen/izakaya."
+      "title": "Dec 4 — Snow Monkeys at Jigokudani + final food stop",
+      "morning": "Go to Snow Monkey Park (Jigokudani Yaen-koen) in the morning for the main snow monkey viewing and photography. Keep a flexible rhythm in case monkeys are active only at certain times.",
+      "afternoon": "Continue the park at your own pace and return toward Nagano city with time for a relaxed reset before dinner.",
+      "evening": "Final local-food meal in central Nagano plus a last short night photo walk near the station/city centre."
     }
   ],
   "tips": [
-    "Use an IC card for local convenience and keep transport economical.",
-    "Prioritize photo spots and temple areas earlier in the day for better light and fewer crowds.",
-    "For izakayas, order a few signature dishes plus one drink to keep costs controlled while still feeling like an experience.",
-    "Bundle neighborhoods within each city day to reduce unnecessary transit."
+    "Budget note: you said flights and hotel are already booked, so the €300 budget is treated as meals + local transport + entry fees + small daily extras.",
+    "December planning: start early (short daylight), dress in layers, and build in warm breaks between photo sessions.",
+    "Snow monkey photography: expect cold and condensation—keep a lens cloth handy and protect your camera when moving between warm indoors and outdoors.",
+    "Food strategy for a relaxed pace: plan one sit-down local meal per day and fill the rest with smaller snacks/desserts so you can keep moving and photographing."
   ],
   "savings_tips": [
-    "Start early for markets/temples and schedule photo-focused spots in daylight.",
-    "Do snacks/market tastings midday, and reserve bigger spending for ramen/izakaya dinners.",
-    "Limit paid ticketed attractions to 1–2 per day and rely on free temple-area exploration and walking."
+    "Do the more “scheduled” part first each day (Zenko-ji early on Day 1, snow monkeys early on Day 2) to avoid spending time and money later.",
+    "Use snack-hopping (local treats) instead of multiple expensive meals; it also adds variety for photography.",
+    "Limit extra rides: stay in the city centre except for the dedicated snow monkey day trip."
   ],
   "budget": {
     "currency": "EUR",
     "accommodation": 0.0,
-    "food": 500.0,
-    "transport": 180.0,
-    "activities": 120.0
+    "food": 120.0,
+    "transport": 60.0,
+    "activities": 40.0
   }
 }
