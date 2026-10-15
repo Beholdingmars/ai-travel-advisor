@@ -713,7 +713,7 @@ textarea::placeholder { color: var(--slate); }
       if (!raw) return;
       const data = JSON.parse(raw);
       if (Array.isArray(data.history)) state.history = data.history.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string");
-      if (data.itinerary && Array.isArray(data.itinerary.days)) state.itinerary = data.itinerary;
+      if (data.itinerary && Array.isArray(data.itinerary.days) && data.itinerary.days.length) state.itinerary = data.itinerary;
     } catch (e) {}
   }
 
@@ -917,8 +917,14 @@ textarea::placeholder { color: var(--slate); }
     setStatus("busy", "Building itinerary");
     const started = Date.now();
     const timer = setInterval(() => { el.loadingMeta.textContent = `${Math.round((Date.now() - started) / 1000)} s`; }, 1000);
+    const previous = state.itinerary;
     try {
       const data = await api("/itinerary", { method: "POST", body: JSON.stringify({ history: state.history }) });
+      if (!data || !Array.isArray(data.days) || !data.days.length) {
+        const err = new Error("The advisor still needs a few details. Answer its last question, then create the itinerary.");
+        err.status = 409;
+        throw err;
+      }
       state.itinerary = data;
       activeDay = 0;
       save();
@@ -928,11 +934,17 @@ textarea::placeholder { color: var(--slate); }
       toast("Itinerary ready");
       setStatus("ready", "Ready");
     } catch (err) {
+      state.itinerary = previous;
+      if (previous) renderTrip(false);
       showState(state.itinerary ? "trip" : "empty");
       setView("chat");
       const box = document.createElement("div");
       box.className = "msg msg-error";
-      box.textContent = err.status ? err.message : "Couldn't reach the planner. Check that the server is running, then try again.";
+      // a TypeError from fetch means the request never got an answer
+      if (!err.status && !(err instanceof TypeError)) err.status = -1;
+      box.textContent = err.status > 0 ? err.message
+        : err.status === -1 ? "Something went wrong while drawing the itinerary. Try again."
+        : "Couldn't reach the planner. Check your connection, then try again.";
       el.messages.appendChild(box); scrollChat();
       setStatus(err.status ? "ready" : "offline", err.status ? "Ready" : "Offline");
     } finally {
