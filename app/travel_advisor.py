@@ -238,7 +238,9 @@ class TravelAdvisor:
                        "budget errors (the total must not exceed the user's budget). "
                        "Then fill in the itinerary format with concrete activities and budget amounts. "
                        "Keep the user's facts (destination, days, budget, interests) exactly as they gave them. "
-                       "Budget per person. Keep every tip short: one sentence each.",
+                       "Budget per person. Keep every tip short: one sentence each. "
+                       "If a detail is still missing, make a sensible assumption and mention it in the summary: "
+                       "never answer with a question and always include every day of the trip.",
         }
 
         response = self.client.responses.parse(

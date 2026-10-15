@@ -232,12 +232,18 @@ button { cursor: pointer; }
   border: 1px solid rgba(168, 217, 232, 0.14);
   transition: border-color var(--t-micro);
 }
-.input-wrap:focus-within { border-color: var(--glass-edge-strong); }
+.input-wrap { transition: border-color var(--t-micro), box-shadow var(--t-std) var(--ease-out); }
+.input-wrap:focus-within {
+  border-color: rgba(168, 217, 232, 0.55);
+  box-shadow: 0 0 0 3px rgba(168, 217, 232, 0.10), 0 0 24px -6px rgba(168, 217, 232, 0.35);
+}
 textarea {
   resize: none; border: 0; background: transparent; outline: none;
   min-height: 24px; max-height: 160px; padding: 6px 0;
-  font-size: 15px; line-height: 1.45;
+  /* 16px or more stops iPhone Safari from zooming in when the field is tapped */
+  font-size: 16px; line-height: 1.45;
 }
+textarea:focus, textarea:focus-visible { outline: none; }
 textarea::placeholder { color: var(--slate); }
 .send {
   width: 38px; height: 38px; border-radius: 50%; border: 0;

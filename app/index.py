@@ -99,12 +99,20 @@ def itinerary(request: ItineraryRequest) -> Itinerary:
     history = [m.model_dump() for m in request.history]
 
     try:
-        return advisor.make_itinerary(history)
+        result = advisor.make_itinerary(history)
     except OpenAIError as error:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="The AI provider could not process the request.",
         ) from error
+
+    if not result.days:
+        # the planner had too little to work with (for example, the advisor was still asking questions)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="The advisor still needs a few details. Answer its last question, then create the itinerary.",
+        )
+    return result
 
 
 @app.post("/itinerary/pdf", response_class=Response)
