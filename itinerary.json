@@ -1,39 +1,52 @@
 {
-  "destination": "Nagano, Japan",
-  "trip_title": "Relaxed Winter Photography Trip: Nagano (Zenko-ji + Snow Monkeys) — Dec 3–4",
-  "summary": "This 2-day Nagano itinerary keeps things relaxed and centered on your priorities: temples for photography, snow monkeys, and local food. You’ll have a dedicated morning for Jigokudani and flexible temple time, with warm breaks built in for December cold.",
+  "destination": "Hamburg, Germany",
+  "trip_title": "Hamburg, 14–16 November: Local Food, Harbour Views and Cosy Neighbourhoods",
+  "summary": "A relaxed 3-day solo trip combining local food, waterfront architecture, one good museum and a little nightlife, mainly using walking and public transport. Estimated spending is €420 per person, excluding your already-arranged accommodation, leaving €180 of your €600 budget unspent.",
   "days": [
     {
       "day_number": 1,
-      "title": "Dec 3 — Zenko-ji temple area + local food photography",
-      "morning": "Zenko-ji Temple area for relaxed walking and photography; explore the surrounding temple-town lanes for winter street scenes.",
-      "afternoon": "Quiet, indoor or slower segment around the Zenko-ji area (temple history/museum time if desired), plus optional gentle stroll between Nagano city centre and the temple zone for photos.",
-      "evening": "Dinner in central Nagano focused on local dishes (e.g., regional specialties like oyaki and local soba if available) and a short evening photo walk for warm storefront lights."
+      "title": "14 November — Old Town, Kunsthalle and Sternschanze",
+      "morning": "Around 09:30, have a Franzbrötchen and coffee at a central bakery, then explore the Rathaus exterior, Alsterarkaden and Jungfernstieg. Allow about 90 minutes for this compact walk, including stops. Have an unhurried lunch before walking approximately 15–20 minutes from Jungfernstieg to the Hamburger Kunsthalle.",
+      "afternoon": "Spend about 2–2.5 hours at the Hamburger Kunsthalle, concentrating on the collections that interest you rather than attempting every gallery. Allow €25 for admission as a planning estimate, not a verified price. If 14 November falls on a Monday, move this museum visit to Day 2 and do that afternoon's HafenCity walk today instead; confirm museum opening hours before booking.",
+      "evening": "Allow approximately 25–35 minutes to reach Sternschanze by public transport and on foot. Enjoy a good dinner followed by one or two neighbourhood bars. This is the main nightlife evening, but keep it relatively early if you will visit the Fish Market the following morning."
     },
     {
       "day_number": 2,
-      "title": "Dec 4 — Snow Monkeys at Jigokudani + final food stop",
-      "morning": "Go to Snow Monkey Park (Jigokudani Yaen-koen) in the morning for the main snow monkey viewing and photography. Keep a flexible rhythm in case monkeys are active only at certain times.",
-      "afternoon": "Continue the park at your own pace and return toward Nagano city with time for a relaxed reset before dinner.",
-      "evening": "Final local-food meal in central Nagano plus a last short night photo walk near the station/city centre."
+      "title": "15 November — Fish, Landungsbrücken and Elbphilharmonie",
+      "morning": "If this date is Sunday, visit the Altona Fish Market around 07:30, subject to confirmed seasonal hours, and have a Fischbrötchen for breakfast. Otherwise, start around 10:00 with breakfast near Landungsbrücken and save the market for whichever trip date is Sunday. From the market area, allow 20–30 minutes to walk along the waterfront to Landungsbrücken. If you have energy, explore the Old Elbe Tunnel on foot; allow roughly 45–60 minutes for the descent, crossing, views and return, subject to access.",
+      "afternoon": "Have a relaxed seafood lunch near the waterfront, then walk approximately 25–35 minutes to the Elbphilharmonie. Visit the Plaza for harbour views, with about 45–60 minutes for the visit and access queues. Continue with a short HafenCity waterfront walk and a warm café stop. Allow €10 for Plaza access or reservation as an estimate; confirm the actual ticket arrangements.",
+      "evening": "Stay around HafenCity for dinner or return toward your accommodation. Make this a quiet evening after the early market start. If you skipped nightlife on Day 1, an alternative is a short visit to a St. Pauli bar; allow approximately 25–40 minutes from HafenCity by public transport and walking."
+    },
+    {
+      "day_number": 3,
+      "title": "16 November — Speicherstadt, Chilehaus and a Final Café",
+      "morning": "Start around 10:00 with coffee and a Franzbrötchen, then spend about 90 minutes exploring Speicherstadt's canals, bridges and brick warehouses. Follow a compact route around Brooksfleet, the Speicherstadtrathaus exterior and the Wasserschloss viewpoint, allowing plenty of time for photographs rather than adding another paid attraction.",
+      "afternoon": "Walk approximately 15–20 minutes to the Kontorhausviertel and admire the Chilehaus exterior. Have a leisurely lunch, followed by a cosy café stop near the old town. Keep the remainder of the afternoon free for your departure or a short Alster waterfront stroll; allow extra time to collect luggage.",
+      "evening": "If you are still in Hamburg, finish with an early dinner near your accommodation or departure station. Otherwise, use the food allowance for a meal before travelling. No ticketed evening activity is planned, so departure timing remains flexible."
     }
   ],
   "tips": [
-    "Budget note: you said flights and hotel are already booked, so the €300 budget is treated as meals + local transport + entry fees + small daily extras.",
-    "December planning: start early (short daylight), dress in layers, and build in warm breaks between photo sessions.",
-    "Snow monkey photography: expect cold and condensation—keep a lens cloth handy and protect your camera when moving between warm indoors and outdoors.",
-    "Food strategy for a relaxed pace: plan one sit-down local meal per day and fill the rest with smaller snacks/desserts so you can keep moving and photographing."
+    "The year was not specified, so weekdays cannot be assigned reliably. The Altona Fish Market is a Sunday event: move it to whichever of 14–16 November is Sunday, replacing that morning's walk and shortening other sightseeing rather than adding it on top. If none of these dates is Sunday, the market will not fit; substitute a Fischbrötchen lunch near the harbour.",
+    "I cannot perform live weather or price checks here. A reliable date-specific forecast also requires the year and proximity to departure. As a seasonal planning estimate, expect cool November conditions, roughly 4–9°C during the day, with possible rain and stronger wind along the harbour. Check the forecast shortly before travelling.",
+    "Bring a waterproof, wind-resistant jacket, warm layers and water-resistant walking shoes. Daylight is limited in November, so prioritise harbour views and architecture before late afternoon.",
+    "Confirm Kunsthalle opening days, Fish Market winter hours, Elbphilharmonie Plaza ticket arrangements and Old Elbe Tunnel access before travelling. Earlier quoted prices and event dates should not be treated as verified for your trip.",
+    "All journey times are approximate and exclude travel from your accommodation, whose location is unknown. The waterfront day involves several kilometres of walking; skip the tunnel or use public transport if you want a gentler pace.",
+    "Budget per person: accommodation €0, food and drinks €300, local transport €35, activities €85; total €420. This leaves €180 below your €600 ceiling. Food receives the largest allocation, as requested.",
+    "The €85 activity allowance comprises an estimated €25 for the Kunsthalle, €10 for Plaza access or booking, €30 for an optional live-music admission and €20 contingency. Meals, cafés and alcoholic drinks are included in the €300 food allowance, not counted twice.",
+    "Hamburg's local currency is EUR, so your €600 budget already equals €600 locally; no currency conversion is necessary. Accommodation is excluded because you already have a place to stay. Transport estimates cover local travel, not an unspecified journey to or from Hamburg."
   ],
   "savings_tips": [
-    "Do the more “scheduled” part first each day (Zenko-ji early on Day 1, snow monkeys early on Day 2) to avoid spending time and money later.",
-    "Use snack-hopping (local treats) instead of multiple expensive meals; it also adds variety for photography.",
-    "Limit extra rides: stay in the city centre except for the dedicated snow monkey day trip."
+    "Compare individual public-transport tickets with the current day-ticket price each morning. On walking-focused days, a day ticket may not save money.",
+    "Reserve the museum and Plaza only after confirming opening times and your preferred schedule. Avoid adding a sightseeing pass unless its included attractions genuinely match this plan.",
+    "Enjoy the harbour from public waterfront paths and the Plaza rather than paying for a harbour cruise.",
+    "Visit Speicherstadt earlier in the day for quieter photographs, and book popular dinner spots if visiting on a weekend.",
+    "Treat the €180 remaining balance as optional headroom, not a spending target. It can absorb fare changes, a special meal or unexpected costs without exceeding your budget."
   ],
   "budget": {
     "currency": "EUR",
     "accommodation": 0.0,
-    "food": 120.0,
-    "transport": 60.0,
-    "activities": 40.0
+    "food": 300.0,
+    "transport": 35.0,
+    "activities": 85.0
   }
 }
