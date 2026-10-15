@@ -1,10 +1,13 @@
+from pathlib import Path
 from typing import Literal
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import FileResponse, Response
 from openai import OpenAIError
 from pydantic import BaseModel, Field
 
+from app.itinerary_pdf import itinerary_pdf
 from app.travel_advisor import GREETING, Itinerary, TravelAdvisor
 
 
@@ -17,6 +20,8 @@ app = FastAPI(
 )
 
 advisor = TravelAdvisor()
+
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 
 # ---------- What goes in and out (Pydantic) ----------
@@ -49,6 +54,12 @@ class ItineraryRequest(BaseModel):
 
 
 # ---------- Endpoints ----------
+
+@app.get("/", include_in_schema=False)
+def home() -> FileResponse:
+    """Serve the web interface."""
+    return FileResponse(STATIC_DIR / "index.html")
+
 
 @app.get("/health")
 def health() -> dict[str, str]:
@@ -94,3 +105,16 @@ def itinerary(request: ItineraryRequest) -> Itinerary:
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="The AI provider could not process the request.",
         ) from error
+
+
+@app.post("/itinerary/pdf", response_class=Response)
+def itinerary_as_pdf(itinerary: Itinerary) -> Response:
+    """Turn a finished itinerary into a designed PDF (no AI call, so it is free and fast)."""
+    pdf = itinerary_pdf(itinerary)
+    city = itinerary.destination.split(",")[0].strip() or "itinerary"
+    safe_name = "".join(ch for ch in city if ch.isalnum() or ch in " -").strip() or "itinerary"
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="Meridian - {safe_name}.pdf"'},
+    )

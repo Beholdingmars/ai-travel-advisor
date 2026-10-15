@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meridian · Travel Advisor</title>
+<meta name="description" content="Plan a trip in conversation with an AI travel advisor, then see the itinerary drawn day by day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* ============================================================
+   Tokens
+   ============================================================ */
+:root {
+  --navy: #0A1019;
+  --deep: #111C2B;
+  --ivory: #F5F2EB;
+  --white: #FAFAF8;
+  --slate: #8994A4;
+  --ice: #A8D9E8;
+  --champagne: #C7B99B;
+  --danger: #E8A7A0;
+
+  --text: var(--white);
+  --text-2: #C9CFD8;
+  --text-3: var(--slate);
+
+  /* glass levels */
+  --glass-1-bg: rgba(20, 31, 46, 0.62);
+  --glass-1-blur: 28px;
+  --glass-2-bg: rgba(26, 39, 57, 0.48);
+  --glass-2-blur: 18px;
+  --glass-3-bg: rgba(168, 217, 232, 0.07);
+  --glass-edge: rgba(168, 217, 232, 0.16);
+  --glass-edge-strong: rgba(168, 217, 232, 0.34);
+  --glass-highlight: inset 0 1px 0 rgba(250, 250, 248, 0.08), inset 0 0 0 1px rgba(168, 217, 232, 0.05);
+  --glass-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
+
+  --r-lg: 28px;
+  --r-md: 18px;
+  --r-sm: 12px;
+  --r-pill: 999px;
+
+  --t-micro: 160ms;
+  --t-std: 280ms;
+  --t-panel: 440ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--navy);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+button, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; border-radius: 8px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ============================================================
+   Atmosphere: night sky + graticule
+   ============================================================ */
+.atmosphere {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(1200px 700px at 78% 18%, rgba(168, 217, 232, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 10% 95%, rgba(199, 185, 155, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--navy) 0%, var(--deep) 100%);
+}
+.atmosphere svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.55; }
+
+/* glass material */
+.glass-1, .glass-2, .glass-3 { border: 1px solid var(--glass-edge); box-shadow: var(--glass-highlight); }
+.glass-1 { background: var(--glass-1-bg); box-shadow: var(--glass-highlight), var(--glass-shadow); }
+.glass-2 { background: var(--glass-2-bg); }
+.glass-3 { background: var(--glass-3-bg); }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-1 { backdrop-filter: blur(var(--glass-1-blur)) saturate(140%); -webkit-backdrop-filter: blur(var(--glass-1-blur)) saturate(140%); }
+  .glass-2 { backdrop-filter: blur(var(--glass-2-blur)) saturate(130%); -webkit-backdrop-filter: blur(var(--glass-2-blur)) saturate(130%); }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-1 { background: rgba(20, 31, 46, 0.96); }
+  .glass-2 { background: rgba(26, 39, 57, 0.92); }
+}
+
+/* ============================================================
+   Shell
+   ============================================================ */
+.app {
+  position: relative; z-index: 1;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding: 18px 20px 20px;
+  gap: 16px;
+}
+
+.nav {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 12px 10px 18px;
+  border-radius: var(--r-pill);
+  max-width: 1440px; width: 100%; margin: 0 auto;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+.brand svg { width: 26px; height: 26px; }
+.brand-name { font-family: var(--serif); font-size: 24px; line-height: 1; letter-spacing: 0.01em; }
+.brand-sub { color: var(--text-3); font-size: 13px; padding-left: 12px; border-left: 1px solid var(--glass-edge); }
+.nav-actions { display: flex; gap: 8px; align-items: center; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-3-bg);
+  color: var(--text);
+  font-size: 14px; font-weight: 500; white-space: nowrap;
+  transition: background var(--t-micro) var(--ease-out), border-color var(--t-micro) var(--ease-out), transform var(--t-micro) var(--ease-out), opacity var(--t-micro);
+}
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn:hover { background: rgba(168, 217, 232, 0.13); border-color: var(--glass-edge-strong); }
+.btn:active { transform: scale(0.97); }
+.btn[disabled] { opacity: 0.38; cursor: not-allowed; transform: none; }
+.btn-primary {
+  background: var(--ice); color: var(--navy); border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(168, 217, 232, 0.4), 0 10px 30px -10px rgba(168, 217, 232, 0.55);
+}
+.btn-primary:hover { background: #BDE4F0; border-color: transparent; }
+.btn-quiet { background: transparent; border-color: transparent; color: var(--text-2); }
+.btn-quiet:hover { background: var(--glass-3-bg); border-color: var(--glass-edge); color: var(--text); }
+.btn-confirm { color: var(--champagne); border-color: rgba(199, 185, 155, 0.45); }
+
+.workspace {
+  max-width: 1440px; width: 100%; margin: 0 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(360px, 440px) 1fr;
+  gap: 16px;
+}
+
+.view-switch { display: none; }
+
+/* ============================================================
+   Conversation panel
+   ============================================================ */
+.chat {
+  border-radius: var(--r-lg);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.chat-head { padding: 20px 22px 14px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(168, 217, 232, 0.08); }
+.chat-head h2 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.1; }
+.status { font-size: 13px; color: var(--text-3); display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #7FC8A9; box-shadow: 0 0 0 3px rgba(127, 200, 169, 0.15); }
+.status[data-state="busy"] .status-dot { background: var(--ice); animation: pulse 1.4s var(--ease-io) infinite; }
+.status[data-state="offline"] .status-dot { background: var(--danger); box-shadow: 0 0 0 3px rgba(232, 167, 160, 0.15); }
+
+.messages {
+  overflow-y: auto; min-height: 0;
+  padding: 18px 22px 8px;
+  display: flex; flex-direction: column; gap: 18px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin; scrollbar-color: rgba(168, 217, 232, 0.2) transparent;
+}
+.msg { max-width: 100%; animation: rise var(--t-std) var(--ease-out) both; }
+.msg-advisor { color: var(--text-2); font-size: 14.5px; }
+.msg-advisor .who { display: flex; align-items: center; gap: 8px; color: var(--champagne); font-size: 13px; margin-bottom: 6px; }
+.msg-advisor .who svg { width: 14px; height: 14px; }
+.msg-user {
+  align-self: flex-end; max-width: 86%;
+  padding: 10px 14px; border-radius: 18px 18px 6px 18px;
+  background: rgba(168, 217, 232, 0.12);
+  border: 1px solid rgba(168, 217, 232, 0.18);
+  color: var(--white); font-size: 14.5px;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.msg-error { color: var(--danger); font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
+.msg-error button { margin-top: 2px; }
+
+/* rendered markdown inside advisor messages */
+.md > :first-child { margin-top: 0; }
+.md > :last-child { margin-bottom: 0; }
+.md p { margin: 0 0 10px; }
+.md h1, .md h2, .md h3, .md h4 { font-family: var(--serif); font-weight: 400; color: var(--white); line-height: 1.2; margin: 18px 0 8px; }
+.md h1 { font-size: 26px; } .md h2 { font-size: 22px; } .md h3 { font-size: 19px; } .md h4 { font-size: 17px; }
+.md strong { color: var(--white); font-weight: 600; }
+.md ul, .md ol { margin: 0 0 10px; padding-left: 20px; }
+.md li { margin: 3px 0; }
+.md li::marker { color: var(--slate); }
+.md a { color: var(--ice); text-decoration-color: rgba(168, 217, 232, 0.4); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.md hr { border: 0; border-top: 1px solid rgba(168, 217, 232, 0.12); margin: 14px 0; }
+.md code { font-size: 13px; background: rgba(168, 217, 232, 0.08); padding: 1px 5px; border-radius: 5px; }
+
+/* waiting state inside the chat */
+.thinking { display: flex; align-items: center; gap: 12px; color: var(--text-3); font-size: 13.5px; }
+.thinking svg { width: 120px; height: 18px; flex: none; }
+.thinking .track { stroke: rgba(168, 217, 232, 0.18); }
+.thinking .run { stroke: var(--ice); stroke-dasharray: 18 102; animation: travel 1.6s var(--ease-io) infinite; }
+.thinking .hint { display: block; color: var(--text-3); font-size: 12.5px; margin-top: 2px; }
+
+.starters { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+.starter {
+  text-align: left; padding: 10px 14px; border-radius: var(--r-sm);
+  background: var(--glass-3-bg); border: 1px solid rgba(168, 217, 232, 0.1);
+  color: var(--text-2); font-size: 13.5px; line-height: 1.4;
+  transition: border-color var(--t-micro), background var(--t-micro), color var(--t-micro);
+}
+.starter:hover { border-color: var(--glass-edge-strong); color: var(--white); background: rgba(168, 217, 232, 0.1); }
+
+.composer { padding: 12px 14px 14px; border-top: 1px solid rgba(168, 217, 232, 0.08); display: grid; gap: 10px; }
+.cta-row { display: none; }
+.cta-row.is-visible { display: flex; animation: rise var(--t-std) var(--ease-out) both; }
+.cta-row .btn { width: 100%; justify-content: center; height: 44px; }
+.input-wrap {
+  display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8px;
+  padding: 8px 8px 8px 14px; border-radius: 20px;
+  background: rgba(10, 16, 25, 0.55);
+  border: 1px solid rgba(168, 217, 232, 0.14);
+  transition: border-color var(--t-micro);
+}
+.input-wrap:focus-within { border-color: var(--glass-edge-strong); }
+textarea {
+  resize: none; border: 0; background: transparent; outline: none;
+  min-height: 24px; max-height: 160px; padding: 6px 0;
+  font-size: 15px; line-height: 1.45;
+}
+textarea::placeholder { color: var(--slate); }
+.send {
+  width: 38px; height: 38px; border-radius: 50%; border: 0;
+  background: var(--ice); color: var(--navy);
+  display: grid; place-items: center;
+  transition: transform var(--t-micro) var(--ease-out), opacity var(--t-micro);
+}
+.send svg { width: 18px; height: 18px; }
+.send:active { transform: scale(0.92); }
+.send[disabled] { opacity: 0.35; cursor: not-allowed; }
+.composer-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); padding: 0 4px; }
+.composer-meta .over { color: var(--danger); }
+
+/* ============================================================
+   Trip canvas
+   ============================================================ */
+.canvas {
+  position: relative; min-height: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid rgba(168, 217, 232, 0.08);
+  background: linear-gradient(180deg, rgba(17, 28, 43, 0.55), rgba(10, 16, 25, 0.35));
+}
+.canvas-scroll { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(168, 217, 232, 0.2) transparent; }
+.canvas-state { min-height: 100%; }
+[hidden] { display: none !important; }
+
+/* empty + loading state */
+.intro {
+  min-height: 100%;
+  display: grid; align-content: center;
+  padding: clamp(32px, 6vw, 88px);
+  position: relative;
+}
+.intro-route { position: absolute; right: 0; bottom: 0; width: min(46%, 620px); height: 82%; pointer-events: none; }
+.intro-route .path-bg { stroke: rgba(168, 217, 232, 0.10); }
+.intro-route .path { stroke: url(#routeGrad); stroke-dasharray: 1100; stroke-dashoffset: 1100; animation: draw 2.8s var(--ease-out) 0.3s forwards; }
+.intro-route .wp { fill: var(--navy); stroke: var(--ice); stroke-width: 1.5; opacity: 0; animation: appear var(--t-std) var(--ease-out) forwards; }
+.intro-route .wp-label { fill: var(--slate); font: 500 11px var(--sans); opacity: 0; animation: appear var(--t-std) var(--ease-out) forwards; }
+.intro-copy { position: relative; max-width: 560px; z-index: 1; }
+.intro-copy h1 {
+  margin: 0 0 18px;
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(44px, 5.4vw, 76px); line-height: 0.98; letter-spacing: -0.01em;
+  color: var(--ivory);
+}
+.intro-copy p { margin: 0; color: var(--text-2); font-size: 16px; max-width: 46ch; }
+.intro-steps { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 14px; max-width: 420px; }
+.intro-steps li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; color: var(--text-2); font-size: 14px; }
+.intro-steps .step-icon { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--ice); }
+.intro-steps .step-icon svg { width: 17px; height: 17px; }
+.intro-steps strong { display: block; color: var(--white); font-weight: 500; }
+
+.loading-copy h1 { font-size: clamp(36px, 4vw, 56px); }
+.loading-meta { margin-top: 16px; color: var(--text-3); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.intro-route.is-looping .path { animation: draw 2.4s var(--ease-io) infinite alternate; }
+
+/* itinerary */
+.trip { padding: clamp(28px, 4vw, 56px) clamp(24px, 4vw, 64px) 64px; }
+.trip-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: end; }
+.trip-destination { display: inline-flex; align-items: center; gap: 8px; color: var(--champagne); font-size: 14px; margin-bottom: 12px; }
+.trip-destination svg { width: 15px; height: 15px; }
+.trip-title {
+  margin: 0; font-family: var(--serif); font-weight: 400;
+  font-size: clamp(40px, 4.6vw, 68px); line-height: 1; letter-spacing: -0.01em; color: var(--ivory);
+  max-width: 16ch;
+}
+.trip-summary { margin: 18px 0 0; color: var(--text-2); font-size: 16px; max-width: 62ch; }
+.trip-facts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.fact { padding: 12px 16px; border-radius: var(--r-md); min-width: 120px; }
+.fact-value { font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--white); font-variant-numeric: tabular-nums; }
+.fact-label { font-size: 12.5px; color: var(--text-3); margin-top: 6px; }
+
+/* the journey line: day route */
+.route { margin: 40px 0 28px; position: relative; height: 120px; }
+.route svg { width: 100%; height: 120px; display: block; overflow: visible; }
+.route .line-bg { stroke: rgba(168, 217, 232, 0.12); }
+.route .line { stroke: url(#routeGrad2); stroke-dasharray: var(--len); stroke-dashoffset: var(--len); }
+.route.no-anim .line { stroke-dashoffset: 0; }
+.route.is-drawn .line { transition: stroke-dashoffset 1.6s var(--ease-out); stroke-dashoffset: 0; }
+.route-stop {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 44px; height: 44px; padding: 0; border: 0; background: transparent;
+  display: grid; place-items: center;
+  opacity: 0; animation: appear var(--t-std) var(--ease-out) var(--delay, 0ms) forwards;
+}
+.route.no-anim .route-stop { animation-delay: 0ms; }
+.route-stop .dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--navy); border: 1.5px solid rgba(168, 217, 232, 0.5);
+  transition: transform var(--t-std) var(--ease-out), background var(--t-std), border-color var(--t-std), box-shadow var(--t-std);
+}
+.route-stop .lbl { position: absolute; top: 40px; font-size: 12px; color: var(--slate); white-space: nowrap; transition: color var(--t-std); }
+.route-stop:hover .dot { border-color: var(--ice); }
+.route-stop.is-active .dot { background: var(--ice); border-color: var(--ice); transform: scale(1.25); box-shadow: 0 0 0 6px rgba(168, 217, 232, 0.14), 0 0 24px rgba(168, 217, 232, 0.45); }
+.route-stop.is-active .lbl { color: var(--white); }
+.route-stop:focus-visible { outline: none; }
+.route-stop:focus-visible .dot { box-shadow: 0 0 0 3px var(--navy), 0 0 0 5px var(--ice); }
+
+.days-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 26px; }
+.day-tab { height: 34px; padding: 0 14px; border-radius: var(--r-pill); border: 1px solid transparent; background: transparent; color: var(--text-3); font-size: 13.5px; transition: color var(--t-micro), background var(--t-micro), border-color var(--t-micro); }
+.day-tab:hover { color: var(--white); }
+.day-tab[aria-selected="true"] { color: var(--navy); background: var(--ivory); }
+
+.day { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; }
+.day-title { margin: 0 0 22px; font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3vw, 42px); line-height: 1.05; color: var(--ivory); }
+.day-title .num { color: var(--slate); }
+.stops { list-style: none; margin: 0; padding: 0; position: relative; }
+.stops::before {
+  content: ""; position: absolute; left: 19px; top: 22px; bottom: 22px; width: 1.5px;
+  background: linear-gradient(180deg, var(--ice), rgba(199, 185, 155, 0.7));
+  transform-origin: top; animation: grow 700ms var(--ease-out) both;
+}
+.stop-item { display: grid; grid-template-columns: 40px 1fr; gap: 18px; padding-bottom: 26px; position: relative; animation: rise var(--t-std) var(--ease-out) both; }
+.stop-item:nth-child(2) { animation-delay: 60ms; }
+.stop-item:nth-child(3) { animation-delay: 120ms; }
+.stop-item:last-child { padding-bottom: 0; }
+.stop-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--ice); position: relative; z-index: 1; background: var(--deep); }
+.stop-icon svg { width: 19px; height: 19px; }
+.stop-when { font-size: 13px; color: var(--champagne); margin: 2px 0 4px; }
+.stop-text { margin: 0; color: var(--text-2); font-size: 15.5px; line-height: 1.6; max-width: 64ch; }
+
+.aside { display: grid; gap: 14px; position: sticky; top: 24px; }
+.panel { border-radius: var(--r-md); padding: 18px 20px; }
+.panel h3 { margin: 0 0 12px; font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--white); }
+.panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.panel li { font-size: 14px; color: var(--text-2); padding-left: 16px; position: relative; line-height: 1.5; }
+.panel li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid var(--ice); }
+.notes {
+  margin-top: 56px; padding-top: 40px;
+  border-top: 1px solid rgba(168, 217, 232, 0.1);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px;
+}
+.note-block h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--ivory); }
+.note-block h3 svg { width: 18px; height: 18px; color: var(--ice); }
+.note-block.save h3 svg { color: var(--champagne); }
+.note-block ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.note-block li { position: relative; padding-left: 18px; color: var(--text-2); font-size: 14.5px; line-height: 1.55; max-width: 62ch; }
+.note-block li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid var(--ice); }
+.note-block.save li::before { border-color: var(--champagne); }
+
+.budget-rows { display: grid; gap: 12px; }
+.budget-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13.5px; color: var(--text-2); }
+.budget-row .amt { color: var(--white); font-variant-numeric: tabular-nums; }
+.bar { grid-column: 1 / -1; height: 4px; border-radius: 4px; background: rgba(168, 217, 232, 0.08); overflow: hidden; }
+.bar span { display: block; height: 100%; width: 0; border-radius: 4px; background: linear-gradient(90deg, var(--ice), var(--champagne)); transition: width 900ms var(--ease-out); }
+.budget-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(168, 217, 232, 0.1); }
+.budget-total span:first-child { color: var(--text-3); font-size: 13.5px; }
+.budget-total .amt { font-family: var(--serif); font-size: 30px; color: var(--white); font-variant-numeric: tabular-nums; }
+.budget-note { font-size: 12.5px; color: var(--text-3); margin: 10px 0 0; }
+
+.trip-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 36px; }
+
+/* toast */
+.toast {
+  position: fixed; left: 50%; bottom: 28px; z-index: 20;
+  transform: translate(-50%, 20px); opacity: 0;
+  padding: 10px 16px; border-radius: var(--r-pill);
+  font-size: 14px; display: flex; gap: 10px; align-items: center;
+  transition: opacity var(--t-std) var(--ease-out), transform var(--t-std) var(--ease-out);
+  pointer-events: none;
+}
+.toast svg { width: 16px; height: 16px; color: #7FC8A9; }
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ============================================================
+   Motion
+   ============================================================ */
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes appear { to { opacity: 1; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes travel { from { stroke-dashoffset: 120; } to { stroke-dashoffset: 0; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
+  .intro-route .path { stroke-dashoffset: 0; }
+  .thinking .run { stroke-dasharray: none; }
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1180px) {
+  .day { grid-template-columns: 1fr; }
+  .aside { position: static; }
+  .notes { gap: 36px; }
+  .trip-head { grid-template-columns: 1fr; }
+  .trip-facts { justify-content: flex-start; }
+}
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  .app { padding: 12px 12px 16px; height: auto; min-height: 100%; grid-template-rows: auto auto 1fr; }
+  .brand-sub { display: none; }
+  .nav { padding: 8px 8px 8px 14px; }
+  .workspace { grid-template-columns: 1fr; }
+  .view-switch {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;
+    border-radius: var(--r-pill); max-width: 360px; width: 100%; margin: 0 auto;
+  }
+  .view-switch button { height: 36px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text-3); font-size: 14px; font-weight: 500; transition: background var(--t-std) var(--ease-out), color var(--t-std); }
+  .view-switch button[aria-selected="true"] { background: var(--ivory); color: var(--navy); }
+  .chat { height: calc(100dvh - 150px); }
+  .canvas { min-height: calc(100dvh - 150px); }
+  .canvas-scroll { position: static; }
+  .workspace[data-view="chat"] .canvas { display: none; }
+  .workspace[data-view="trip"] .chat { display: none; }
+  .intro-steps { display: none; }
+  .intro { align-content: start; padding-top: 40px; min-height: calc(100dvh - 150px); }
+  .intro-route { width: 92%; height: 42%; opacity: .75; }
+  .trip { padding: 28px 20px 40px; }
+  .route { margin: 28px 0 24px; }
+  .composer-meta span:first-child { visibility: hidden; }
+  .trip-actions { display: grid; grid-template-columns: 1fr; }
+  .notes { grid-template-columns: 1fr; margin-top: 40px; padding-top: 32px; }
+  .trip-actions .btn { justify-content: center; height: 44px; }
+  .nav-actions .label { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- SVG sprite: Meridian iconography (monoline, 1.5 stroke) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="routeGrad" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#A8D9E8"/><stop offset="1" stop-color="#C7B99B"/>
+    </linearGradient>
+    <linearGradient id="routeGrad2" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#A8D9E8"/><stop offset="1" stop-color="#C7B99B"/>
+    </linearGradient>
+  </defs>
+  <symbol id="i-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="16" cy="16" r="13" opacity=".45"/>
+    <path d="M16 3v26M3 16h26" opacity=".25"/>
+    <path d="M16 6.5l3.2 9.5L16 25.5 12.8 16z"/>
+    <circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/>
+  </symbol>
+  <symbol id="i-morning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0"/><path d="M12 6.5V4M5.2 9.7 3.6 8.1M18.8 9.7l1.6-1.6"/>
+  </symbol>
+  <symbol id="i-afternoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="10" r="4"/><path d="M12 2.5v1.5M12 16v1.5M4.5 10H3M21 10h-1.5M6.7 4.7l1 1M16.3 14.3l1 1M17.3 4.7l-1 1M7.7 14.3l-1 1"/><path d="M3 21h4l2.5-2.5 3 2.5L16 19l5 2"/>
+  </symbol>
+  <symbol id="i-evening" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17.5 13.5A6.5 6.5 0 0 1 9.5 4a7 7 0 1 0 8 9.5z"/><path d="M17 4.5v2M16 5.5h2M20.5 9v1.4M19.8 9.7h1.4"/>
+  </symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 5.5h16v10H9.5L5 19.5v-4H4z"/>
+  </symbol>
+  <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="5.5" cy="18" r="2"/><circle cx="18.5" cy="6" r="2"/><path d="M7.5 18h7a3.5 3.5 0 0 0 0-7h-5a3.5 3.5 0 0 1 0-7h7"/>
+  </symbol>
+  <symbol id="i-stamp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.6 2.5L16 9.5"/>
+  </symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 19V5M6 11l6-6 6 6"/>
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 12a7.5 7.5 0 0 1 13-5.1L20 9.5M20 4.5v5h-5M19.5 12a7.5 7.5 0 0 1-13 5.1L4 14.5M4 19.5v-5h5"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+</svg>
+
+<div class="atmosphere" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <g fill="none" stroke="rgba(168,217,232,0.07)" stroke-width="1">
+      <path d="M-100 140 Q720 60 1540 140"/><path d="M-100 300 Q720 230 1540 300"/><path d="M-100 460 Q720 400 1540 460"/>
+      <path d="M-100 620 Q720 570 1540 620"/><path d="M-100 780 Q720 740 1540 780"/>
+      <path d="M180 -50 Q120 450 180 950"/><path d="M460 -50 Q420 450 460 950"/><path d="M720 -50 V950"/>
+      <path d="M980 -50 Q1020 450 980 950"/><path d="M1260 -50 Q1320 450 1260 950"/>
+    </g>
+  </svg>
+</div>
+
+<div class="app">
+  <header class="nav glass-1">
+    <a class="brand" href="/" aria-label="Meridian, start page">
+      <svg style="color:var(--ice)"><use href="#i-mark"/></svg>
+      <span class="brand-name">Meridian</span>
+      <span class="brand-sub">Travel advisor</span>
+    </a>
+    <div class="nav-actions">
+      <button class="btn btn-quiet" id="downloadBtn" hidden>
+        <svg><use href="#i-download"/></svg><span class="label">Download PDF</span>
+      </button>
+      <button class="btn" id="newTripBtn">
+        <svg><use href="#i-plus"/></svg><span class="label" id="newTripLabel">New trip</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="view-switch glass-2" role="tablist" aria-label="View">
+    <button role="tab" id="tabChat" aria-selected="true" aria-controls="chatPanel">Conversation</button>
+    <button role="tab" id="tabTrip" aria-selected="false" aria-controls="canvasPanel">Itinerary</button>
+  </div>
+
+  <main class="workspace" id="workspace" data-view="chat">
+    <!-- Conversation -->
+    <section class="chat glass-1" id="chatPanel" aria-label="Conversation with the advisor">
+      <div class="chat-head">
+        <h2>Your advisor</h2>
+        <span class="status" id="status" data-state="ready" role="status"><span class="status-dot"></span><span id="statusText">Ready</span></span>
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite"></div>
+
+      <div class="composer">
+        <div class="cta-row" id="ctaRow">
+          <button class="btn btn-primary" id="itineraryBtn">
+            <svg><use href="#i-route"/></svg><span id="itineraryBtnLabel">Create itinerary</span>
+          </button>
+        </div>
+        <form class="input-wrap" id="form">
+          <label for="input" class="sr-only">Message the advisor</label>
+          <textarea id="input" rows="1" placeholder="Where would you like to go?" autocomplete="off"></textarea>
+          <button class="send" id="sendBtn" type="submit" aria-label="Send message" disabled>
+            <svg><use href="#i-send"/></svg>
+          </button>
+        </form>
+        <div class="composer-meta">
+          <span>Enter to send, Shift + Enter for a new line</span>
+          <span id="counter">0 / 1500</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trip canvas -->
+    <section class="canvas" id="canvasPanel" aria-label="Itinerary">
+      <div class="canvas-scroll" id="canvasScroll">
+
+        <!-- Empty -->
+        <div class="canvas-state intro" id="stateEmpty">
+          <svg class="intro-route" viewBox="0 0 600 700" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+            <path class="path-bg" fill="none" stroke-width="1.5" stroke-dasharray="3 7" d="M40 640 C 160 600, 150 470, 280 450 S 430 330, 400 230 S 470 90, 560 60"/>
+            <path class="path" fill="none" stroke-width="2" stroke-linecap="round" d="M40 640 C 160 600, 150 470, 280 450 S 430 330, 400 230 S 470 90, 560 60"/>
+            <circle class="wp" cx="40" cy="640" r="6" style="animation-delay:.4s"/>
+            <circle class="wp" cx="280" cy="450" r="6" style="animation-delay:1.3s"/>
+            <circle class="wp" cx="400" cy="230" r="6" style="animation-delay:2.1s"/>
+            <circle class="wp" cx="560" cy="60" r="7" style="animation-delay:2.8s"/>
+          </svg>
+          <div class="intro-copy">
+            <h1>Plan it in conversation. See it drawn day by day.</h1>
+            <p>Tell the advisor where you're going, for how long and what you love. When the plan feels right, turn it into an itinerary here.</p>
+            <ol class="intro-steps">
+              <li><span class="step-icon glass-3"><svg><use href="#i-chat"/></svg></span><span><strong>Talk it through</strong>Destination, days, budget and interests. It checks weather and converts currencies as it goes.</span></li>
+              <li><span class="step-icon glass-3"><svg><use href="#i-compass"/></svg></span><span><strong>Refine</strong>Ask for changes until the plan fits.</span></li>
+              <li><span class="step-icon glass-3"><svg><use href="#i-route"/></svg></span><span><strong>Create the itinerary</strong>A second, stronger model reviews the plan and lays it out here.</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Loading itinerary -->
+        <div class="canvas-state intro" id="stateLoading" hidden>
+          <svg class="intro-route is-looping" viewBox="0 0 600 700" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+            <path class="path-bg" fill="none" stroke-width="1.5" stroke-dasharray="3 7" d="M40 640 C 160 600, 150 470, 280 450 S 430 330, 400 230 S 470 90, 560 60"/>
+            <path class="path" fill="none" stroke-width="2" stroke-linecap="round" d="M40 640 C 160 600, 150 470, 280 450 S 430 330, 400 230 S 470 90, 560 60"/>
+          </svg>
+          <div class="intro-copy loading-copy">
+            <h1>Reviewing your plan and laying out each day</h1>
+            <p>The planner checks timing, travel between places and the budget before it draws the itinerary.</p>
+            <div class="loading-meta" id="loadingMeta">0 s</div>
+          </div>
+        </div>
+
+        <!-- Itinerary -->
+        <article class="canvas-state trip" id="stateTrip" hidden>
+          <header class="trip-head">
+            <div>
+              <div class="trip-destination"><svg><use href="#i-pin"/></svg><span id="tripDestination"></span></div>
+              <h1 class="trip-title" id="tripTitle"></h1>
+              <p class="trip-summary" id="tripSummary"></p>
+            </div>
+            <div class="trip-facts">
+              <div class="fact glass-2"><div class="fact-value" id="factDays"></div><div class="fact-label">Days</div></div>
+              <div class="fact glass-2"><div class="fact-value" id="factBudget"></div><div class="fact-label" id="factBudgetLabel">Budget per person</div></div>
+            </div>
+          </header>
+
+          <div class="route" id="route" aria-label="Days of the trip"></div>
+
+          <div class="days-tabs" id="dayTabs" hidden></div>
+
+          <div class="day">
+            <section aria-live="polite">
+              <h2 class="day-title" id="dayTitle"></h2>
+              <ol class="stops" id="stops"></ol>
+              <div class="trip-actions">
+                <button class="btn" id="refineBtn"><svg><use href="#i-chat"/></svg>Ask for changes</button>
+                <button class="btn" id="regenBtn"><svg><use href="#i-refresh"/></svg>Update itinerary</button>
+              </div>
+            </section>
+            <aside class="aside">
+              <section class="panel glass-2">
+                <h3>Budget</h3>
+                <div class="budget-rows" id="budgetRows"></div>
+                <div class="budget-total"><span>Total per person</span><span class="amt" id="budgetTotal"></span></div>
+                <p class="budget-note">Estimates from the advisor. Check current prices before booking.</p>
+              </section>
+            </aside>
+          </div>
+
+          <div class="notes">
+            <section class="note-block">
+              <h3><svg aria-hidden="true"><use href="#i-compass"/></svg>Good to know</h3>
+              <ul id="tips"></ul>
+            </section>
+            <section class="note-block save">
+              <h3><svg aria-hidden="true"><use href="#i-stamp"/></svg>Avoid crowds, save money</h3>
+              <ul id="savings"></ul>
+            </section>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast glass-1" id="toast" role="status"><svg><use href="#i-check"/></svg><span id="toastText"></span></div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ---------- config ----------
+  const params = new URLSearchParams(location.search);
+  const API = (params.get("api") || "").replace(/\/$/, "");      // empty = same server
+  const MAX_CHARS = 1500;
+  const STORE_KEY = "meridian.v1";
+  const FALLBACK_GREETING = "Hi! I'm your travel advisor. Where would you like to go, and for how many days?";
+  const STARTERS = [
+    "3 days in Lisbon in May, 600 EUR, travelling alone. Mostly food and viewpoints, relaxed pace.",
+    "A week in Japan for two, 4000 EUR, temples, design and great ramen.",
+    "Long weekend in Copenhagen, 900 EUR, architecture, cafés and a bit of nightlife."
+  ];
+
+  // ---------- state ----------
+  let state = { history: [], itinerary: null, greeting: FALLBACK_GREETING };
+  let busy = false;
+  let activeDay = 0;
+
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    messages: $("messages"), input: $("input"), form: $("form"), send: $("sendBtn"), counter: $("counter"),
+    status: $("status"), statusText: $("statusText"), ctaRow: $("ctaRow"), itineraryBtn: $("itineraryBtn"),
+    itineraryBtnLabel: $("itineraryBtnLabel"), workspace: $("workspace"), tabChat: $("tabChat"), tabTrip: $("tabTrip"),
+    stateEmpty: $("stateEmpty"), stateLoading: $("stateLoading"), stateTrip: $("stateTrip"), loadingMeta: $("loadingMeta"),
+    canvasScroll: $("canvasScroll"), download: $("downloadBtn"), newTrip: $("newTripBtn"), newTripLabel: $("newTripLabel"),
+    toast: $("toast"), toastText: $("toastText")
+  };
+
+  // ---------- persistence (per browser, best effort) ----------
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ history: state.history, itinerary: state.itinerary })); } catch (e) {}
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (Array.isArray(data.history)) state.history = data.history.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string");
+      if (data.itinerary && Array.isArray(data.itinerary.days)) state.itinerary = data.itinerary;
+    } catch (e) {}
+  }
+
+  // ---------- tiny, safe markdown ----------
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function inline(s) {
+    s = escapeHtml(s);
+    s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (m, text, url) =>
+      `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`);
+    return s;
+  }
+  function markdown(src) {
+    const lines = src.replace(/\r/g, "").split("\n");
+    let html = "", list = null, para = [];
+    const flushPara = () => { if (para.length) { html += `<p>${inline(para.join(" "))}</p>`; para = []; } };
+    const flushList = () => { if (list) { html += `</${list}>`; list = null; } };
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      let m;
+      if (!line.trim()) { flushPara(); flushList(); continue; }
+      if ((m = line.match(/^\s*(#{1,4})\s+(.*)$/))) { flushPara(); flushList(); const n = m[1].length; html += `<h${n}>${inline(m[2])}</h${n}>`; continue; }
+      if (/^\s*(-{3,}|\*{3,})\s*$/.test(line)) { flushPara(); flushList(); html += "<hr>"; continue; }
+      if ((m = line.match(/^\s*[-*•]\s+(.*)$/))) { flushPara(); if (list !== "ul") { flushList(); html += "<ul>"; list = "ul"; } html += `<li>${inline(m[1])}</li>`; continue; }
+      if ((m = line.match(/^\s*\d+[.)]\s+(.*)$/))) { flushPara(); if (list !== "ol") { flushList(); html += "<ol>"; list = "ol"; } html += `<li>${inline(m[1])}</li>`; continue; }
+      flushList(); para.push(line.trim());
+    }
+    flushPara(); flushList();
+    return html;
+  }
+
+  // ---------- API ----------
+  async function api(path, options = {}) {
+    const res = await fetch(API + path, {
+      ...options,
+      headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+    });
+    let body = null;
+    try { body = await res.json(); } catch (e) {}
+    if (!res.ok) {
+      const err = new Error(friendlyError(res.status, body));
+      err.status = res.status;
+      throw err;
+    }
+    return body;
+  }
+  function friendlyError(status, body) {
+    if (status === 422) return "The advisor couldn't read that message. Keep it under 1,500 characters and try again.";
+    if (status === 502) return "The AI provider didn't answer. Wait a moment and send the message again.";
+    if (body && typeof body.detail === "string") return body.detail;
+    return `The server answered with an error (${status}). Try again.`;
+  }
+
+  // ---------- chat rendering ----------
+  function advisorMessage(text) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg msg-advisor";
+    wrap.innerHTML = `<div class="who"><svg><use href="#i-compass"/></svg>Advisor</div><div class="md"></div>`;
+    wrap.querySelector(".md").innerHTML = markdown(text);
+    return wrap;
+  }
+  function userMessage(text) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg msg-user";
+    wrap.textContent = text;
+    return wrap;
+  }
+  function renderChat() {
+    el.messages.innerHTML = "";
+    el.messages.appendChild(advisorMessage(state.greeting));
+    for (const m of state.history) {
+      el.messages.appendChild(m.role === "user" ? userMessage(m.content) : advisorMessage(m.content));
+    }
+    if (!state.history.length) renderStarters();
+    updateCta();
+    scrollChat();
+  }
+  function renderStarters() {
+    const box = document.createElement("div");
+    box.className = "starters";
+    box.id = "starters";
+    for (const s of STARTERS) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "starter";
+      b.textContent = s;
+      b.addEventListener("click", () => { el.input.value = s; onInput(); el.input.focus(); });
+      box.appendChild(b);
+    }
+    el.messages.appendChild(box);
+  }
+  function scrollChat() { el.messages.scrollTop = el.messages.scrollHeight; }
+
+  function thinkingNode() {
+    const wrap = document.createElement("div");
+    wrap.className = "msg thinking";
+    wrap.id = "thinking";
+    wrap.innerHTML = `
+      <svg viewBox="0 0 120 18" aria-hidden="true">
+        <path class="track" d="M2 12 C 30 2, 50 16, 70 8 S 104 4, 118 9" fill="none" stroke-width="1.5" stroke-dasharray="2 4"/>
+        <path class="run" d="M2 12 C 30 2, 50 16, 70 8 S 104 4, 118 9" fill="none" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span><span id="thinkingText">Planning</span><span class="hint" id="thinkingHint"></span></span>`;
+    return wrap;
+  }
+
+  function setStatus(kind, text) {
+    el.status.dataset.state = kind;
+    el.statusText.textContent = text;
+  }
+
+  // ---------- sending ----------
+  async function sendMessage(text) {
+    if (busy) return;
+    const message = text.trim();
+    if (!message || message.length > MAX_CHARS) return;
+
+    busy = true; updateComposer();
+    const starters = $("starters"); if (starters) starters.remove();
+    el.messages.appendChild(userMessage(message));
+    const thinking = thinkingNode();
+    el.messages.appendChild(thinking);
+    scrollChat();
+    el.input.value = ""; onInput();
+    setStatus("busy", "Thinking");
+
+    const started = Date.now();
+    const timer = setInterval(() => {
+      const s = Math.round((Date.now() - started) / 1000);
+      const t = $("thinkingText"), h = $("thinkingHint");
+      if (t) t.textContent = `Planning, ${s} s`;
+      if (h && s >= 15) h.textContent = "Web searches for weather and prices can take up to a minute.";
+    }, 1000);
+
+    try {
+      const data = await api("/chat", { method: "POST", body: JSON.stringify({ message, history: state.history }) });
+      state.history = data.history;
+      save();
+      thinking.replaceWith(advisorMessage(data.answer));
+      setStatus("ready", "Ready");
+    } catch (err) {
+      const box = document.createElement("div");
+      box.className = "msg msg-error";
+      box.innerHTML = `<span></span>`;
+      box.querySelector("span").textContent = err.status ? err.message : "Couldn't reach the advisor. Check that the server is running, then try again.";
+      const retry = document.createElement("button");
+      retry.className = "btn"; retry.type = "button"; retry.textContent = "Try again";
+      retry.addEventListener("click", () => { box.remove(); el.messages.lastElementChild?.classList.contains("msg-user") && el.messages.lastElementChild.remove(); sendMessage(message); });
+      box.appendChild(retry);
+      thinking.replaceWith(box);
+      setStatus(err.status ? "ready" : "offline", err.status ? "Ready" : "Offline");
+    } finally {
+      clearInterval(timer);
+      busy = false; updateComposer(); updateCta(); scrollChat();
+    }
+  }
+
+  // ---------- composer ----------
+  function onInput() {
+    const len = el.input.value.length;
+    el.counter.textContent = `${len.toLocaleString("en")} / 1,500`;
+    el.counter.classList.toggle("over", len > MAX_CHARS);
+    el.input.style.height = "auto";
+    el.input.style.height = Math.min(el.input.scrollHeight, 160) + "px";
+    updateComposer();
+  }
+  function updateComposer() {
+    const v = el.input.value.trim();
+    el.send.disabled = busy || !v || el.input.value.length > MAX_CHARS;
+  }
+  function updateCta() {
+    const hasPlan = state.history.some(m => m.role === "assistant");
+    el.ctaRow.classList.toggle("is-visible", hasPlan);
+    el.itineraryBtn.disabled = busy;
+    el.itineraryBtnLabel.textContent = state.itinerary ? "Update itinerary" : "Create itinerary";
+  }
+
+  el.form.addEventListener("submit", (e) => { e.preventDefault(); sendMessage(el.input.value); });
+  el.input.addEventListener("input", onInput);
+  el.input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!el.send.disabled) sendMessage(el.input.value); }
+  });
+
+  // ---------- canvas states ----------
+  function showState(name) {
+    el.stateEmpty.hidden = name !== "empty";
+    el.stateLoading.hidden = name !== "loading";
+    el.stateTrip.hidden = name !== "trip";
+    el.canvasScroll.scrollTop = 0;
+  }
+
+  async function createItinerary() {
+    if (busy || !state.history.length) return;
+    busy = true; updateComposer(); updateCta();
+    setView("trip");
+    showState("loading");
+    setStatus("busy", "Building itinerary");
+    const started = Date.now();
+    const timer = setInterval(() => { el.loadingMeta.textContent = `${Math.round((Date.now() - started) / 1000)} s`; }, 1000);
+    try {
+      const data = await api("/itinerary", { method: "POST", body: JSON.stringify({ history: state.history }) });
+      state.itinerary = data;
+      activeDay = 0;
+      save();
+      renderTrip(true);
+      showState("trip");
+      el.download.hidden = false;
+      toast("Itinerary ready");
+      setStatus("ready", "Ready");
+    } catch (err) {
+      showState(state.itinerary ? "trip" : "empty");
+      setView("chat");
+      const box = document.createElement("div");
+      box.className = "msg msg-error";
+      box.textContent = err.status ? err.message : "Couldn't reach the planner. Check that the server is running, then try again.";
+      el.messages.appendChild(box); scrollChat();
+      setStatus(err.status ? "ready" : "offline", err.status ? "Ready" : "Offline");
+    } finally {
+      clearInterval(timer);
+      busy = false; updateComposer(); updateCta();
+    }
+  }
+  el.itineraryBtn.addEventListener("click", createItinerary);
+  $("regenBtn").addEventListener("click", createItinerary);
+  $("refineBtn").addEventListener("click", () => { setView("chat"); el.input.focus(); });
+
+  // ---------- itinerary rendering ----------
+  const money = (n, cur) => {
+    try { return new Intl.NumberFormat("en", { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(n); }
+    catch (e) { return `${Math.round(n).toLocaleString("en")} ${cur}`; }
+  };
+  function text(id, value) { $(id).textContent = value || ""; }
+
+  function renderTrip(animate) {
+    const it = state.itinerary;
+    if (!it) return;
+    text("tripDestination", it.destination);
+    text("tripTitle", it.trip_title);
+    text("tripSummary", it.summary);
+    text("factDays", String(it.days.length));
+    const b = it.budget || {};
+    const parts = [["Accommodation", b.accommodation], ["Food", b.food], ["Transport", b.transport], ["Activities", b.activities]];
+    const total = parts.reduce((s, [, v]) => s + (Number(v) || 0), 0);
+    text("factBudget", money(total, b.currency || "EUR"));
+
+    // budget
+    const rows = $("budgetRows"); rows.innerHTML = "";
+    const max = Math.max(1, ...parts.map(([, v]) => Number(v) || 0));
+    for (const [label, v] of parts) {
+      const row = document.createElement("div");
+      row.className = "budget-row";
+      row.innerHTML = `<span></span><span class="amt"></span><div class="bar"><span></span></div>`;
+      row.children[0].textContent = label;
+      row.children[1].textContent = money(Number(v) || 0, b.currency || "EUR");
+      rows.appendChild(row);
+      const fill = row.querySelector(".bar span");
+      requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = `${((Number(v) || 0) / max) * 100}%`; }));
+    }
+    text("budgetTotal", money(total, b.currency || "EUR"));
+
+    fillList("tips", it.tips);
+    fillList("savings", it.savings_tips);
+
+    renderRoute(animate);
+    renderTabs();
+    renderDay();
+  }
+  function fillList(id, items) {
+    const ul = $(id); ul.innerHTML = "";
+    for (const t of items || []) { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); }
+  }
+
+  // The journey line: one waypoint per day
+  function renderRoute(animate) {
+    const days = state.itinerary.days;
+    const box = $("route");
+    const W = 1000, H = 120, pad = 30;
+    const n = days.length;
+    const pts = days.map((d, i) => {
+      const x = n === 1 ? W / 2 : pad + (i * (W - pad * 2)) / (n - 1);
+      const y = 52 + Math.sin(i * 1.3 + 0.6) * 20;
+      return [x, y];
+    });
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    if (n === 1) d = `M ${pad} ${pts[0][1]} L ${W - pad} ${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) {
+      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+      const cx = (x0 + x1) / 2;
+      d += ` C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}`;
+    }
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+        <path class="line-bg" d="${d}" fill="none" stroke-width="1.5" stroke-dasharray="3 6" vector-effect="non-scaling-stroke"/>
+        <path class="line" d="${d}" fill="none" stroke-width="2" stroke-linecap="round"/>
+      </svg>`;
+    box.classList.remove("is-drawn");
+    const path = box.querySelector(".line");
+    path.style.setProperty("--len", path.getTotalLength());
+
+    pts.forEach(([x, y], i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "route-stop";
+      b.dataset.index = i;
+      b.style.left = `${(x / W) * 100}%`;
+      b.style.top = `${y}px`;
+      b.style.setProperty("--delay", `${300 + i * (1200 / Math.max(1, n - 1))}ms`);
+      b.setAttribute("aria-label", `Day ${i + 1}: ${days[i].title}`);
+      b.innerHTML = `<span class="dot"></span><span class="lbl">Day ${i + 1}</span>`;
+      b.addEventListener("click", () => selectDay(i));
+      b.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          const next = (i + (e.key === "ArrowRight" ? 1 : -1) + n) % n;
+          selectDay(next);
+          box.querySelector(`.route-stop[data-index="${next}"]`).focus();
+        }
+      });
+      box.appendChild(b);
+    });
+
+    if (animate) requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add("is-drawn")));
+    else box.classList.add("is-drawn", "no-anim");
+    markActiveStop();
+  }
+  function markActiveStop() {
+    document.querySelectorAll("#route .route-stop").forEach(b => {
+      const on = Number(b.dataset.index) === activeDay;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  function renderTabs() {
+    const tabs = $("dayTabs"); tabs.innerHTML = "";
+    state.itinerary.days.forEach((d, i) => {
+      const t = document.createElement("button");
+      t.className = "day-tab"; t.type = "button";
+      t.setAttribute("role", "tab");
+      t.setAttribute("aria-selected", String(i === activeDay));
+      t.textContent = `Day ${d.day_number || i + 1}`;
+      t.addEventListener("click", () => selectDay(i));
+      t.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          const n = state.itinerary.days.length;
+          const next = (i + (e.key === "ArrowRight" ? 1 : -1) + n) % n;
+          selectDay(next); tabs.children[next].focus();
+        }
+      });
+      tabs.appendChild(t);
+    });
+  }
+  function selectDay(i) {
+    activeDay = i;
+    [...$("dayTabs").children].forEach((t, j) => t.setAttribute("aria-selected", String(j === i)));
+    markActiveStop();
+    renderDay();
+  }
+  function renderDay() {
+    const d = state.itinerary.days[activeDay];
+    const title = $("dayTitle");
+    title.innerHTML = `<span class="num"></span> <span class="t"></span>`;
+    title.querySelector(".num").textContent = `Day ${d.day_number || activeDay + 1}.`;
+    title.querySelector(".t").textContent = d.title;
+    const ol = $("stops"); ol.innerHTML = "";
+    [["Morning", "i-morning", d.morning], ["Afternoon", "i-afternoon", d.afternoon], ["Evening", "i-evening", d.evening]].forEach(([when, icon, body]) => {
+      const li = document.createElement("li");
+      li.className = "stop-item";
+      li.innerHTML = `<span class="stop-icon glass-3"><svg aria-hidden="true"><use href="#${icon}"/></svg></span><div><div class="stop-when"></div><p class="stop-text"></p></div>`;
+      li.querySelector(".stop-when").textContent = when;
+      li.querySelector(".stop-text").textContent = body;
+      ol.appendChild(li);
+    });
+  }
+
+  // ---------- views (mobile) ----------
+  function setView(v) {
+    el.workspace.dataset.view = v;
+    el.tabChat.setAttribute("aria-selected", String(v === "chat"));
+    el.tabTrip.setAttribute("aria-selected", String(v === "trip"));
+  }
+  el.tabChat.addEventListener("click", () => setView("chat"));
+  el.tabTrip.addEventListener("click", () => setView("trip"));
+
+  // ---------- nav actions ----------
+  // ---------- download: the server draws the PDF ----------
+  let downloading = false;
+  el.download.addEventListener("click", async () => {
+    if (!state.itinerary || downloading) return;
+    downloading = true;
+    el.download.disabled = true;
+    toast("Preparing your PDF…");
+    try {
+      const res = await fetch("/itinerary/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(state.itinerary),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const city = (state.itinerary.destination || "itinerary").split(",")[0].trim();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Meridian - ${city}.pdf`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      toast("PDF downloaded");
+    } catch (e) {
+      toast("Could not create the PDF. Try again.");
+    } finally {
+      el.download.disabled = false;
+      downloading = false;
+    }
+  });
+
+  let confirmTimer = null;
+  el.newTrip.addEventListener("click", () => {
+    if (busy) return;
+    if (!state.history.length && !state.itinerary) { el.input.focus(); return; }
+    if (!el.newTrip.classList.contains("btn-confirm")) {
+      el.newTrip.classList.add("btn-confirm");
+      el.newTripLabel.textContent = "Clear this trip?";
+      confirmTimer = setTimeout(resetConfirm, 3500);
+      return;
+    }
+    resetConfirm();
+    state.history = []; state.itinerary = null; activeDay = 0;
+    save();
+    el.download.hidden = true;
+    renderChat(); showState("empty"); setView("chat");
+    toast("New trip started");
+    el.input.focus();
+  });
+  function resetConfirm() {
+    clearTimeout(confirmTimer);
+    el.newTrip.classList.remove("btn-confirm");
+    el.newTripLabel.textContent = "New trip";
+  }
+
+  let toastTimer = null;
+  function toast(msg) {
+    el.toastText.textContent = msg;
+    el.toast.classList.add("is-on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.toast.classList.remove("is-on"), 2200);
+  }
+
+  // ---------- start ----------
+  async function init() {
+    load();
+    renderChat();
+    if (state.itinerary) { renderTrip(false); showState("trip"); el.download.hidden = false; }
+    onInput();
+    try {
+      const g = await api("/greeting");
+      if (g && g.greeting) { state.greeting = g.greeting; const first = el.messages.querySelector(".msg-advisor .md"); if (first) first.innerHTML = markdown(g.greeting); }
+      setStatus("ready", "Ready");
+    } catch (e) {
+      setStatus("offline", "Offline");
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>

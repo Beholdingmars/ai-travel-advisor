@@ -146,8 +146,8 @@ class Itinerary(BaseModel):
     trip_title: str
     summary: str
     days: list[Day]
-    tips: list[str]
-    savings_tips: list[str] = Field(description="Ways to avoid crowds or save money")
+    tips: list[str] = Field(description="3 to 5 practical tips, one short sentence each")
+    savings_tips: list[str] = Field(description="3 to 5 ways to avoid crowds or save money, one short sentence each")
     budget: Budget
 
 
@@ -238,7 +238,7 @@ class TravelAdvisor:
                        "budget errors (the total must not exceed the user's budget). "
                        "Then fill in the itinerary format with concrete activities and budget amounts. "
                        "Keep the user's facts (destination, days, budget, interests) exactly as they gave them. "
-                       "Budget per person.",
+                       "Budget per person. Keep every tip short: one sentence each.",
         }
 
         response = self.client.responses.parse(
