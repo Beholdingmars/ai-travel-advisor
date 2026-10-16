@@ -191,6 +191,10 @@ button { cursor: pointer; }
 .msg-error { color: var(--danger); font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
 .msg-error button { margin-top: 2px; }
 
+.msg-advisor.is-streaming .md > :last-child::after {
+  content: ""; display: inline-block; width: 7px; height: 1em; margin-left: 3px; vertical-align: -0.15em;
+  border-radius: 2px; background: var(--ice); animation: pulse 1s var(--ease-io) infinite;
+}
 /* rendered markdown inside advisor messages */
 .md > :first-child { margin-top: 0; }
 .md > :last-child { margin-bottom: 0; }
@@ -220,6 +224,49 @@ button { cursor: pointer; }
   transition: border-color var(--t-micro), background var(--t-micro), color var(--t-micro);
 }
 .starter:hover { border-color: var(--glass-edge-strong); color: var(--white); background: rgba(168, 217, 232, 0.1); }
+
+/* quick trip brief */
+.brief-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+  padding: 12px 14px; border-radius: var(--r-sm); text-align: left;
+  background: rgba(199, 185, 155, 0.08); border: 1px solid rgba(199, 185, 155, 0.28);
+  color: var(--ivory); font-size: 14px; font-weight: 500;
+  transition: border-color var(--t-micro), background var(--t-micro);
+}
+.brief-toggle:hover { border-color: rgba(199, 185, 155, 0.55); background: rgba(199, 185, 155, 0.12); }
+.brief-toggle small { display: block; font-weight: 400; color: var(--text-3); font-size: 12.5px; margin-top: 2px; }
+.brief-toggle svg { width: 18px; height: 18px; color: var(--champagne); flex: none; }
+.brief {
+  display: grid; gap: 14px; padding: 16px; border-radius: var(--r-md);
+  background: rgba(10, 16, 25, 0.45); border: 1px solid var(--glass-edge);
+  animation: rise var(--t-std) var(--ease-out) both;
+}
+.brief[hidden] { display: none; }
+.field { display: grid; gap: 7px; }
+.field > span, .field legend { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); padding: 0; }
+fieldset.field { border: 0; margin: 0; padding: 0; min-width: 0; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.text-in {
+  width: 100%; height: 40px; padding: 0 12px; border-radius: 12px;
+  background: rgba(10, 16, 25, 0.55); border: 1px solid rgba(168, 217, 232, 0.14);
+  color: var(--white); font: inherit; font-size: 16px; color-scheme: dark;
+  transition: border-color var(--t-micro), box-shadow var(--t-std) var(--ease-out);
+}
+.text-in::placeholder { color: var(--slate); }
+.text-in:focus { outline: none; border-color: rgba(168, 217, 232, 0.55); box-shadow: 0 0 0 3px rgba(168, 217, 232, 0.10); }
+.money-in { display: grid; grid-template-columns: 1fr 84px; gap: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  height: 32px; padding: 0 12px; border-radius: var(--r-pill);
+  background: var(--glass-3-bg); border: 1px solid rgba(168, 217, 232, 0.14);
+  color: var(--text-2); font-size: 13px;
+  transition: background var(--t-micro), border-color var(--t-micro), color var(--t-micro);
+}
+.chip:hover { border-color: var(--glass-edge-strong); color: var(--white); }
+.chip[aria-pressed="true"] { background: var(--ivory); border-color: transparent; color: var(--navy); }
+.brief-actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+.brief-actions .note { margin-right: auto; font-size: 12.5px; color: var(--text-3); }
+.starters-label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); margin: 6px 0 0; }
 
 .composer { padding: 12px 14px 14px; border-top: 1px solid rgba(168, 217, 232, 0.08); display: grid; gap: 10px; }
 .cta-row { display: none; }
@@ -367,6 +414,50 @@ textarea::placeholder { color: var(--slate); }
 .stop-text { margin: 0; color: var(--text-2); font-size: 15.5px; line-height: 1.6; max-width: 64ch; }
 
 .aside { display: grid; gap: 14px; position: sticky; top: 24px; }
+
+/* change one day */
+.day-edit {
+  margin-top: 26px; padding: 16px; border-radius: var(--r-md); display: grid; gap: 12px;
+  background: rgba(10, 16, 25, 0.45); border: 1px solid var(--glass-edge);
+  animation: rise var(--t-std) var(--ease-out) both;
+}
+.day-edit[hidden] { display: none; }
+.day-edit label { font-size: 13px; color: var(--champagne); }
+.day-edit .row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
+.day section.is-rewriting .stops, .day section.is-rewriting .day-title { opacity: .35; filter: blur(1px); transition: opacity var(--t-std), filter var(--t-std); }
+.rewriting {
+  display: flex; align-items: center; gap: 12px; color: var(--text-3); font-size: 13.5px; margin: -8px 0 18px;
+}
+.rewriting svg { width: 120px; height: 18px; }
+.rewriting .track { stroke: rgba(168, 217, 232, 0.18); }
+.rewriting .run { stroke: var(--ice); stroke-dasharray: 18 102; animation: travel 1.6s var(--ease-io) infinite; }
+
+/* day map */
+.map-panel { padding: 0; overflow: hidden; }
+.map-panel[hidden] { display: none; }
+.day-map { height: 230px; background: #0B121C; }
+.map-legend { list-style: none; margin: 0; padding: 12px 16px 14px; display: grid; gap: 7px; }
+.map-panel .map-legend li::before { content: none; }
+.map-panel .map-legend li { padding-left: 0; }
+.map-legend li { padding-left: 0; display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: baseline; font-size: 13px; color: var(--text-2); }
+.map-legend b { font-weight: 600; font-size: 11px; color: var(--ice); }
+.map-note { padding: 0 16px 12px; margin: -4px 0 0; font-size: 11.5px; color: var(--text-3); }
+.pin {
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--navy); border: 1.5px solid var(--ice); color: var(--ice);
+  font: 600 11px/1 var(--sans); box-shadow: 0 0 0 4px rgba(168, 217, 232, 0.16), 0 6px 14px rgba(0,0,0,.45);
+}
+.pin.evening { border-color: var(--champagne); color: var(--champagne); box-shadow: 0 0 0 4px rgba(199, 185, 155, 0.16), 0 6px 14px rgba(0,0,0,.45); }
+.leaflet-container { font: 12px var(--sans); background: #0B121C; }
+/* tint the grey basemap towards the navy palette */
+.tiles-base { filter: sepia(0.35) hue-rotate(175deg) saturate(1.6) brightness(0.72) contrast(1.05); }
+.tiles-labels { opacity: 0.85; }
+.leaflet-control-attribution { background: rgba(10, 16, 25, 0.75) !important; color: var(--text-3) !important; font-size: 10px; }
+.leaflet-control-attribution a { color: var(--text-2) !important; }
+.leaflet-bar a { background: rgba(17, 28, 43, 0.92) !important; color: var(--text) !important; border-color: var(--glass-edge) !important; }
+.leaflet-bar { border: 1px solid var(--glass-edge) !important; box-shadow: none !important; }
+.leaflet-tooltip { background: rgba(17, 28, 43, 0.95); border: 1px solid var(--glass-edge); color: var(--white); border-radius: 8px; box-shadow: none; font-size: 12px; }
+.leaflet-tooltip-top::before { border-top-color: rgba(17, 28, 43, 0.95); }
 .panel { border-radius: var(--r-md); padding: 18px 20px; }
 .panel h3 { margin: 0 0 12px; font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--white); }
 .panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
@@ -460,6 +551,9 @@ textarea::placeholder { color: var(--slate); }
   .composer-meta span:first-child { visibility: hidden; }
   .trip-actions { display: grid; grid-template-columns: 1fr; }
   .notes { grid-template-columns: 1fr; margin-top: 40px; padding-top: 32px; }
+  .day-edit .row { grid-template-columns: 1fr 1fr; }
+  .day-edit .row .text-in { grid-column: 1 / -1; }
+  .day-edit .row .btn { justify-content: center; height: 42px; }
   .trip-actions .btn { justify-content: center; height: 44px; }
   .nav-actions .label { display: none; }
 }
@@ -517,6 +611,8 @@ textarea::placeholder { color: var(--slate); }
   <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4.5 12a7.5 7.5 0 0 1 13-5.1L20 9.5M20 4.5v5h-5M19.5 12a7.5 7.5 0 0 1-13 5.1L4 14.5M4 19.5v-5h5"/>
   </symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
 </svg>
@@ -643,13 +739,32 @@ textarea::placeholder { color: var(--slate); }
           <div class="day">
             <section aria-live="polite">
               <h2 class="day-title" id="dayTitle"></h2>
+              <div class="rewriting" id="rewriting" hidden>
+                <svg viewBox="0 0 120 18" aria-hidden="true"><path class="track" d="M2 12 C 30 2, 50 16, 70 8 S 104 4, 118 9" fill="none" stroke-width="1.5" stroke-dasharray="2 4"/><path class="run" d="M2 12 C 30 2, 50 16, 70 8 S 104 4, 118 9" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+                <span id="rewritingText">Rewriting this day</span>
+              </div>
               <ol class="stops" id="stops"></ol>
+              <form class="day-edit" id="dayEdit" hidden>
+                <label for="dayEditInput" id="dayEditLabel">What should change on this day?</label>
+                <div class="row">
+                  <input class="text-in" id="dayEditInput" maxlength="300" autocomplete="off" placeholder="e.g. less walking, add a cooking class">
+                  <button class="btn btn-primary" type="submit" id="dayEditGo">Rewrite</button>
+                  <button class="btn btn-quiet" type="button" id="dayEditCancel">Cancel</button>
+                </div>
+                <div class="chips" id="dayEditChips"></div>
+              </form>
               <div class="trip-actions">
+                <button class="btn" id="changeDayBtn"><svg><use href="#i-edit"/></svg>Change this day</button>
                 <button class="btn" id="refineBtn"><svg><use href="#i-chat"/></svg>Ask for changes</button>
-                <button class="btn" id="regenBtn"><svg><use href="#i-refresh"/></svg>Update itinerary</button>
+                <button class="btn btn-quiet" id="regenBtn"><svg><use href="#i-route"/></svg>Rebuild itinerary</button>
               </div>
             </section>
             <aside class="aside">
+              <section class="panel glass-2 map-panel" id="mapPanel" hidden aria-label="Map of the day">
+                <div class="day-map" id="dayMap"></div>
+                <ol class="map-legend" id="mapLegend"></ol>
+                <p class="map-note">Locations are approximate.</p>
+              </section>
               <section class="panel glass-2">
                 <h3>Budget</h3>
                 <div class="budget-rows" id="budgetRows"></div>
@@ -770,6 +885,47 @@ textarea::placeholder { color: var(--slate); }
     }
     return body;
   }
+  // Streams the answer: one JSON event per line. Falls back to /chat on servers without streaming.
+  async function chatStream(message, history, onEvent) {
+    const body = JSON.stringify({ message, history });
+    const res = await fetch(API + "/chat/stream", { method: "POST", headers: { "Content-Type": "application/json" }, body });
+    if (res.status === 404 || res.status === 405 || !res.body || !res.body.getReader) {
+      const data = await api("/chat", { method: "POST", body });
+      const done = { type: "done", answer: data.answer, history: data.history };
+      onEvent({ type: "delta", text: data.answer });
+      onEvent(done);
+      return done;
+    }
+    if (!res.ok) {
+      let payload = null;
+      try { payload = await res.json(); } catch (e) {}
+      const err = new Error(friendlyError(res.status, payload));
+      err.status = res.status;
+      throw err;
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "", done = null;
+    const handle = (line) => {
+      if (!line.trim()) return;
+      let ev;
+      try { ev = JSON.parse(line); } catch (e) { return; }
+      if (ev.type === "error") { const err = new Error(ev.message || "The advisor stopped halfway. Try again."); err.status = 502; throw err; }
+      if (ev.type === "done") done = ev;
+      onEvent(ev);
+    };
+    while (true) {
+      const { value, done: finished } = await reader.read();
+      if (finished) break;
+      buffer += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf("\n")) >= 0) { handle(buffer.slice(0, nl)); buffer = buffer.slice(nl + 1); }
+    }
+    handle(buffer);
+    if (!done) { const err = new Error("The answer was cut off. Try again."); err.status = 502; throw err; }
+    return done;
+  }
+
   function friendlyError(status, body) {
     if (status === 422) return "The advisor couldn't read that message. Keep it under 1,500 characters and try again.";
     if (status === 502) return "The AI provider didn't answer. Wait a moment and send the message again.";
@@ -801,10 +957,34 @@ textarea::placeholder { color: var(--slate); }
     updateCta();
     scrollChat();
   }
+  const INTERESTS = ["Food", "Culture", "Design", "Nature", "Nightlife", "Art", "History", "Shopping"];
+
   function renderStarters() {
     const box = document.createElement("div");
     box.className = "starters";
     box.id = "starters";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "brief-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.innerHTML = `<span>Plan with a quick brief<small>Answer everything at once, skip the back-and-forth</small></span><svg aria-hidden="true"><use href="#i-sliders"/></svg>`;
+    box.appendChild(toggle);
+
+    const brief = buildBrief();
+    box.appendChild(brief);
+    toggle.addEventListener("click", () => {
+      const open = brief.hidden;
+      brief.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+      if (open) { brief.querySelector("#bDest").focus(); }
+    });
+
+    const label = document.createElement("p");
+    label.className = "starters-label";
+    label.textContent = "Or start from an example";
+    box.appendChild(label);
+
     for (const s of STARTERS) {
       const b = document.createElement("button");
       b.type = "button";
@@ -814,6 +994,73 @@ textarea::placeholder { color: var(--slate); }
       box.appendChild(b);
     }
     el.messages.appendChild(box);
+  }
+
+  function chipGroup(name, options, multi) {
+    return `<div class="chips" data-group="${name}" data-multi="${multi ? 1 : 0}">` +
+      options.map((o) => `<button type="button" class="chip" aria-pressed="false" data-value="${o}">${o}</button>`).join("") + `</div>`;
+  }
+
+  function buildBrief() {
+    const form = document.createElement("form");
+    form.className = "brief";
+    form.hidden = true;
+    form.noValidate = true;
+    const today = new Date().toISOString().slice(0, 10);
+    form.innerHTML = `
+      <label class="field"><span>Where to?</span><input class="text-in" id="bDest" maxlength="80" placeholder="Kyoto, Japan" autocomplete="off"></label>
+      <div class="field-row">
+        <label class="field"><span>Start date</span><input class="text-in" id="bDate" type="date" min="${today}"></label>
+        <label class="field"><span>Days</span><input class="text-in" id="bDays" type="number" min="1" max="30" inputmode="numeric" placeholder="5"></label>
+      </div>
+      <fieldset class="field"><legend>Who's going</legend>${chipGroup("who", ["Solo", "Couple", "Family", "Friends"], false)}</fieldset>
+      <div class="field">
+        <span>Total budget</span>
+        <div class="money-in">
+          <input class="text-in" id="bBudget" type="number" min="0" inputmode="numeric" placeholder="2000">
+          <select class="text-in" id="bCur" aria-label="Currency"><option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option><option>JPY</option></select>
+        </div>
+      </div>
+      <label class="field"><span>Flying from (optional)</span><input class="text-in" id="bFrom" maxlength="60" placeholder="Hamburg" autocomplete="off"></label>
+      <fieldset class="field"><legend>Pace</legend>${chipGroup("pace", ["Relaxed", "Balanced", "Packed"], false)}</fieldset>
+      <fieldset class="field"><legend>Interests</legend>${chipGroup("interests", INTERESTS, true)}</fieldset>
+      <div class="brief-actions"><span class="note" id="bNote"></span><button class="btn btn-primary" type="submit">Plan my trip</button></div>`;
+
+    form.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      const group = chip.parentElement;
+      const on = chip.getAttribute("aria-pressed") !== "true";
+      if (group.dataset.multi !== "1") group.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", "false"));
+      chip.setAttribute("aria-pressed", String(on));
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const v = (id) => form.querySelector(id).value.trim();
+      const picked = (name) => [...form.querySelectorAll(`[data-group="${name}"] .chip[aria-pressed="true"]`)].map((c) => c.dataset.value);
+      const dest = v("#bDest"), days = parseInt(v("#bDays"), 10);
+      const note = form.querySelector("#bNote");
+      if (!dest) { note.textContent = "Add a destination."; form.querySelector("#bDest").focus(); return; }
+      if (!(days >= 1 && days <= 30)) { note.textContent = "Add the number of days (1–30)."; form.querySelector("#bDays").focus(); return; }
+
+      const parts = [`Destination: ${dest}.`];
+      const date = v("#bDate");
+      if (date) parts.push(`Start date: ${new Date(date + "T12:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.`);
+      parts.push(`Trip length: ${days} ${days === 1 ? "day" : "days"}.`);
+      const who = picked("who")[0];
+      if (who) parts.push(`Travelling: ${({ Solo: "solo", Couple: "as a couple (2 people)", Family: "as a family", Friends: "with friends" })[who]}.`);
+      const budget = parseFloat(v("#bBudget")), from = v("#bFrom"), cur = v("#bCur");
+      if (budget > 0) parts.push(`Total budget: ${budget} ${cur}${who && who !== "Solo" ? " for the whole group" : ""}${from ? `, including flights from ${from}` : ", not including flights"}.`);
+      else if (from) parts.push(`Flying from ${from}.`);
+      const pace = picked("pace")[0];
+      if (pace) parts.push(`Pace: ${pace.toLowerCase()}.`);
+      const interests = picked("interests");
+      if (interests.length) parts.push(`Interests: ${interests.join(", ").toLowerCase()}.`);
+      parts.push("Please write the plan.");
+      sendMessage(parts.join(" "));
+    });
+    return form;
   }
   function scrollChat() { el.messages.scrollTop = el.messages.scrollHeight; }
 
@@ -858,13 +1105,38 @@ textarea::placeholder { color: var(--slate); }
       if (h && s >= 15) h.textContent = "Web searches for weather and prices can take up to a minute.";
     }, 1000);
 
+    // the answer appears word by word; the thinking line stays until the first words arrive
+    let live = null, answerText = "", frame = 0;
+    const nearBottom = () => el.messages.scrollHeight - el.messages.scrollTop - el.messages.clientHeight < 80;
+    const paint = () => {
+      frame = 0;
+      if (!live) return;
+      const stick = nearBottom();
+      live.querySelector(".md").innerHTML = markdown(answerText);
+      if (stick) scrollChat();
+    };
     try {
-      const data = await api("/chat", { method: "POST", body: JSON.stringify({ message, history: state.history }) });
-      state.history = data.history;
+      const done = await chatStream(message, state.history, (ev) => {
+        if (ev.type === "status") {
+          if (!live) { const t = $("thinkingText"); if (t) t.textContent = ev.text; }
+          setStatus("busy", ev.text.replace("…", ""));
+        } else if (ev.type === "delta") {
+          if (!live) { live = advisorMessage(""); live.classList.add("is-streaming"); thinking.replaceWith(live); clearInterval(timer); setStatus("busy", "Writing"); }
+          answerText += ev.text;
+          if (!frame) frame = requestAnimationFrame(paint);
+        } else if (ev.type === "reset") {
+          answerText = "";
+          if (live) { live.replaceWith(thinking); live = null; }
+        }
+      });
+      if (frame) cancelAnimationFrame(frame);
+      state.history = done.history;
       save();
-      thinking.replaceWith(advisorMessage(data.answer));
+      const final = advisorMessage(done.answer);
+      (live || thinking).replaceWith(final);
       setStatus("ready", "Ready");
     } catch (err) {
+      if (live) live.replaceWith(thinking);
       const box = document.createElement("div");
       box.className = "msg msg-error";
       box.innerHTML = `<span></span>`;
@@ -913,6 +1185,8 @@ textarea::placeholder { color: var(--slate); }
     el.stateLoading.hidden = name !== "loading";
     el.stateTrip.hidden = name !== "trip";
     el.canvasScroll.scrollTop = 0;
+    // the map can only measure itself once the itinerary is visible
+    if (name === "trip" && state.itinerary) requestAnimationFrame(() => renderMap());
   }
 
   async function createItinerary() {
@@ -1090,6 +1364,7 @@ textarea::placeholder { color: var(--slate); }
   }
   function selectDay(i) {
     activeDay = i;
+    $("dayEdit").hidden = true;
     [...$("dayTabs").children].forEach((t, j) => t.setAttribute("aria-selected", String(j === i)));
     markActiveStop();
     renderDay();
@@ -1109,6 +1384,139 @@ textarea::placeholder { color: var(--slate); }
       li.querySelector(".stop-text").textContent = body;
       ol.appendChild(li);
     });
+    $("dayEditLabel").textContent = `What should change on day ${d.day_number || activeDay + 1}?`;
+    renderMap();
+  }
+
+  // ---------- change one day ----------
+  const DAY_CHIPS = ["Slower pace", "More local food", "Less walking", "Rainy-day plan", "Something unusual"];
+  const dayEdit = $("dayEdit"), dayEditInput = $("dayEditInput");
+  DAY_CHIPS.forEach((c) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = c;
+    b.addEventListener("click", () => { dayEditInput.value = c; dayEditInput.focus(); });
+    $("dayEditChips").appendChild(b);
+  });
+  function openDayEdit(open) {
+    dayEdit.hidden = !open;
+    $("changeDayBtn").setAttribute("aria-expanded", String(open));
+    if (open) { dayEditInput.value = ""; dayEditInput.focus(); }
+  }
+  $("changeDayBtn").addEventListener("click", () => openDayEdit(dayEdit.hidden));
+  $("dayEditCancel").addEventListener("click", () => openDayEdit(false));
+  dayEdit.addEventListener("keydown", (e) => { if (e.key === "Escape") openDayEdit(false); });
+  dayEdit.addEventListener("submit", (e) => { e.preventDefault(); const c = dayEditInput.value.trim(); if (c) rewriteDay(activeDay, c); });
+
+  async function rewriteDay(index, change) {
+    if (busy || !state.itinerary) return;
+    busy = true; updateComposer(); updateCta();
+    const n = state.itinerary.days[index].day_number || index + 1;
+    const section = $("dayTitle").parentElement;
+    const buttons = [$("changeDayBtn"), $("refineBtn"), $("regenBtn"), $("dayEditGo")];
+    buttons.forEach((b) => (b.disabled = true));
+    section.classList.add("is-rewriting");
+    $("rewritingText").textContent = `Rewriting day ${n}…`;
+    $("rewriting").hidden = false;
+    dayEdit.hidden = true;
+    $("rewriting").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    setStatus("busy", `Rewriting day ${n}`);
+    try {
+      const day = await api("/itinerary/day", { method: "POST", body: JSON.stringify({ itinerary: state.itinerary, day_index: index, change }) });
+      state.itinerary.days[index] = day;
+      // keep the conversation in step, so "Rebuild itinerary" and the advisor know about the change
+      state.history.push(
+        { role: "user", content: `Please change day ${n}: ${change}` },
+        { role: "assistant", content: `I updated day ${n}: **${day.title}**\n- **Morning:** ${day.morning}\n- **Afternoon:** ${day.afternoon}\n- **Evening:** ${day.evening}` }
+      );
+      save();
+      renderChat();
+      activeDay = index;
+      renderTrip(false);
+      toast(`Day ${n} updated`);
+      setStatus("ready", "Ready");
+    } catch (err) {
+      dayEdit.hidden = false;
+      dayEditInput.value = change;
+      toast(err.status ? err.message : "Couldn't reach the planner. Check your connection, then try again.");
+      setStatus(err.status ? "ready" : "offline", err.status ? "Ready" : "Offline");
+    } finally {
+      section.classList.remove("is-rewriting");
+      $("rewriting").hidden = true;
+      buttons.forEach((b) => (b.disabled = false));
+      busy = false; updateComposer(); updateCta();
+    }
+  }
+
+  // ---------- day map (Leaflet, loaded only when a day has places) ----------
+  const loaded = {};
+  function loadAsset(url, kind) {
+    if (!loaded[url]) loaded[url] = new Promise((resolve, reject) => {
+      const node = kind === "css" ? document.createElement("link") : document.createElement("script");
+      if (kind === "css") { node.rel = "stylesheet"; node.href = url; } else { node.src = url; }
+      node.onload = resolve;
+      node.onerror = () => { delete loaded[url]; reject(new Error("load")); };
+      document.head.appendChild(node);
+    });
+    return loaded[url];
+  }
+  const LEAFLET = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/";
+  let map = null, mapLayer = null, mapToken = 0;
+
+  function kmBetween(a, b) {
+    const r = Math.PI / 180, dLat = (b.latitude - a.latitude) * r, dLng = (b.longitude - a.longitude) * r;
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.latitude * r) * Math.cos(b.latitude * r) * Math.sin(dLng / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(h));
+  }
+  function usablePlaces(day) {
+    const ok = (day.places || []).filter((p) => p && Number.isFinite(p.latitude) && Number.isFinite(p.longitude)
+      && Math.abs(p.latitude) <= 90 && Math.abs(p.longitude) <= 180 && !(p.latitude === 0 && p.longitude === 0));
+    if (ok.length < 2) return ok;
+    // drop a stop that is far from all the others (a wrong coordinate from the model)
+    const med = (arr) => { const v = [...arr].sort((a, b) => a - b); return v[Math.floor(v.length / 2)]; };
+    const centre = { latitude: med(ok.map((p) => p.latitude)), longitude: med(ok.map((p) => p.longitude)) };
+    return ok.filter((p) => kmBetween(p, centre) < 150);
+  }
+
+  async function renderMap() {
+    const token = ++mapToken;
+    const panel = $("mapPanel"), legend = $("mapLegend");
+    const places = usablePlaces(state.itinerary.days[activeDay]);
+    if (!places.length) { panel.hidden = true; return; }
+    panel.hidden = false;
+    legend.innerHTML = "";
+    places.forEach((p, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<b>${i + 1}</b><span></span>`;
+      li.querySelector("span").textContent = p.name;
+      legend.appendChild(li);
+    });
+    try {
+      await Promise.all([loadAsset(LEAFLET + "leaflet.min.css", "css"), loadAsset(LEAFLET + "leaflet.min.js", "js")]);
+    } catch (e) { $("dayMap").hidden = true; return; }
+    if (token !== mapToken) return;
+    const L = window.L;
+    $("dayMap").hidden = false;
+    if (!map) {
+      map = L.map("dayMap", { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false, zoomSnap: 0.5 });
+      // Esri "Dark Gray Canvas": free raster tiles without an API key (base + labels)
+      const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/";
+      L.tileLayer(ESRI + "World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 16, className: "tiles-base",
+        attribution: 'Tiles &copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, HERE, Garmin, &copy; OpenStreetMap contributors',
+      }).addTo(map);
+      L.tileLayer(ESRI + "World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 16, className: "tiles-labels" }).addTo(map);
+      mapLayer = L.layerGroup().addTo(map);
+    }
+    mapLayer.clearLayers();
+    const points = places.map((p) => [p.latitude, p.longitude]);
+    if (points.length > 1) L.polyline(points, { color: "#A8D9E8", weight: 2, opacity: 0.75, dashArray: "4 7" }).addTo(mapLayer);
+    places.forEach((p, i) => {
+      const icon = L.divIcon({ className: "", html: `<div class="pin ${p.time_of_day === "evening" ? "evening" : ""}">${i + 1}</div>`, iconSize: [24, 24], iconAnchor: [12, 12] });
+      L.marker([p.latitude, p.longitude], { icon, title: p.name, keyboard: false }).bindTooltip(p.name, { direction: "top", offset: [0, -12] }).addTo(mapLayer);
+    });
+    map.invalidateSize();
+    if (points.length === 1) map.setView(points[0], 14);
+    else map.fitBounds(points, { padding: [30, 30], maxZoom: 15 });
   }
 
   // ---------- views (mobile) ----------
@@ -1116,6 +1524,7 @@ textarea::placeholder { color: var(--slate); }
     el.workspace.dataset.view = v;
     el.tabChat.setAttribute("aria-selected", String(v === "chat"));
     el.tabTrip.setAttribute("aria-selected", String(v === "trip"));
+    if (v === "trip" && map) setTimeout(() => { map.invalidateSize(); if (state.itinerary) renderMap(); }, 50);
   }
   el.tabChat.addEventListener("click", () => setView("chat"));
   el.tabTrip.addEventListener("click", () => setView("trip"));

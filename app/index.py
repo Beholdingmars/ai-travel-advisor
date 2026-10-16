@@ -1,14 +1,15 @@
+import json
 from pathlib import Path
 from typing import Literal
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from openai import OpenAIError
 from pydantic import BaseModel, Field
 
 from app.itinerary_pdf import itinerary_pdf
-from app.travel_advisor import GREETING, Itinerary, TravelAdvisor
+from app.travel_advisor import GREETING, Day, Itinerary, TravelAdvisor
 
 
 load_dotenv()
@@ -45,6 +46,14 @@ class ChatResponse(BaseModel):
 
     answer: str
     history: list[Message]
+
+
+class DayChangeRequest(BaseModel):
+    """A finished itinerary, the day to change and what should change."""
+
+    itinerary: Itinerary
+    day_index: int = Field(ge=0, le=30)
+    change: str = Field(min_length=1, max_length=300)
 
 
 class ItineraryRequest(BaseModel):
@@ -91,6 +100,48 @@ def chat(request: ChatRequest) -> ChatResponse:
         ) from error
 
     return ChatResponse(answer=answer, history=history)
+
+
+@app.post("/chat/stream")
+def chat_stream(request: ChatRequest) -> StreamingResponse:
+    """Same as /chat, but the answer arrives piece by piece (one JSON object per line)."""
+    message = request.message.strip()
+    if not message:
+        raise HTTPException(status_code=422, detail="Message must not be blank.")
+
+    history = [m.model_dump() for m in request.history]
+
+    def events():
+        try:
+            for event in advisor.chat_stream(history, message):
+                yield json.dumps(event) + "\n"
+        except Exception:
+            # the HTTP status (200) is already sent, so the error travels as an event
+            yield json.dumps({"type": "error", "message": "The AI provider could not finish the answer. Try again."}) + "\n"
+
+    return StreamingResponse(
+        events(),
+        media_type="application/x-ndjson",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@app.post("/itinerary/day", response_model=Day)
+def change_day(request: DayChangeRequest) -> Day:
+    """Rewrite one day of the itinerary; the rest of the trip stays the same."""
+    if request.day_index >= len(request.itinerary.days):
+        raise HTTPException(status_code=422, detail="That day is not part of this itinerary.")
+    change = request.change.strip()
+    if not change:
+        raise HTTPException(status_code=422, detail="Say what should change.")
+
+    try:
+        return advisor.rewrite_day(request.itinerary, request.day_index, change)
+    except OpenAIError as error:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="The AI provider could not process the request.",
+        ) from error
 
 
 @app.post("/itinerary", response_model=Itinerary)
